@@ -1,5 +1,5 @@
--- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (20/12/25)
--- Copyright © 2017-2025 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (2/2/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: ntvplus_pls.lua
 -- видеоскприпт: mediavitrina.lua
@@ -32,8 +32,7 @@
 		if rc ~= 200 or not url then return end
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url})
 		if rc ~= 200 then return end
-	adr = answer:match('"videoUrl":%s"([^"]+)')
-	
+	local adr = answer:match('"videoUrl":%s?"([^"]+)')
 	local rc, answer = m_simpleTV.Http.Request(session, {url = adr})
 	if rc ~= 200 then return end
 		
