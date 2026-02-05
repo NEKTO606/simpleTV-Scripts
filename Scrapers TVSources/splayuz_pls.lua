@@ -1,5 +1,7 @@
 -- скрапер TVS для загрузки плейлиста "Splay UZ" https://splay.uz (12/1/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- ## необходим ##
+-- видеоскрипт: splayuz.lua
 -- ## Переименовать каналы ##
 local filter = {
 	--{'Мир-ТВ', 'МИР'},
