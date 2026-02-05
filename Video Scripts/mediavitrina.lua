@@ -1,5 +1,5 @@
--- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (11/12/25)
--- Copyright © 2017-2025 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (5/2/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: mediavitrina_pls.lua
 -- ## открывает подобные ссылки ##
@@ -35,7 +35,7 @@
 		adr = string.format('%s?player_referer_hostname=%s&egress_version_id=%s', adr, referer, egress)
 	elseif inAdr:match('^https://media%.') then
 		slug = inAdr:match('v1/(.-)/streams.json')
-		adr = string.format('https://media.mediavitrina.ru/balancer/v3/%s/streams.json?player_referer_hostname=%s&egress_version_id=7168963', slug, referer)
+		adr = string.format('https://media.mediavitrina.ru/balancer/v3/%s/streams.json?player_referer_hostname=%s&egress_version_id=8063535', slug, referer)
 	end
 	
 	local header = 'Referer: https://player.mediavitrina.ru/'
