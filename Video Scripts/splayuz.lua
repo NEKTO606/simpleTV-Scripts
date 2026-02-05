@@ -14,7 +14,7 @@
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	inAdr  = encode64(inAdr)
-	local retAdr = string.format(decode64('aHR0cHM6Ly9hcGkuc3BsYXkudXovcnUvYXBpL3YzL2Jyb2FkY2FzdC9wbGF5L3MvWjlNbEgyQXdTNWpCVDd2b0NqYmpIS0Z6TEc5RU5sc0RaNWVwVVJiVmg3Yy9wLyVzLm0zdTg'), inAdr)
+	local retAdr = string.format(decode64('aHR0cHM6Ly9hcGkuc3BsYXkudXovcnUvYXBpL3YzL2Jyb2FkY2FzdC9wbGF5L3MvLVVBSzZKSURBOEZuMzZUOHd5WVNjRHBabTUxUG5qNjlpU3NiZWhjbEFnUS9wLyVzLm0zdTg'), inAdr)
 		if not retAdr then return end
 	m_simpleTV.Control.CurrentAddress = retAdr
 -- debug_in_file(retAdr .. '\n')
