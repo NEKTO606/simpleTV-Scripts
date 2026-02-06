@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (5/2/26)
+-- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (6/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: mediavitrina_pls.lua
@@ -125,3 +125,4 @@
 			m_simpleTV.Config.SetValue('mediavitrina_qlty', id)
 		end
 -- debug_in_file(t[index].Address .. '\n')
+
