@@ -34,8 +34,9 @@
 		egress = answer:match('([^=]%d+)&$')
 		adr = string.format('%s?player_referer_hostname=%s&egress_version_id=%s', adr, referer, egress)
 	elseif inAdr:match('^https://media%.') then
+		egress = inAdr:match('([^=]%d*)$')
 		slug = inAdr:match('v1/(.-)/streams.json')
-		adr = string.format('https://media.mediavitrina.ru/balancer/v3/%s/streams.json?player_referer_hostname=%s&egress_version_id=8063535', slug, referer)
+		adr = string.format('https://media.mediavitrina.ru/balancer/v3/%s/streams.json?player_referer_hostname=%s&egress_version_id=%s', slug, referer, egress)
 	end
 	
 	local header = 'Referer: https://player.mediavitrina.ru/'
