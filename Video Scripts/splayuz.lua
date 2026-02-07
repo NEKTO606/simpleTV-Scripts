@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Splay UZ" https://splay.uz (6/2/26)
+-- скрапер TVS для загрузки плейлиста "Splay UZ" https://splay.uz (7/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: splayuz_pls.lua
@@ -38,9 +38,9 @@
 		if rc ~= 200 and i == 1 then
 			m_simpleTV.Config.Remove('splay_token')
 			adr = GetUrl(inAdr)
-		else
-			return adr
 		end
+			if not adr then return end
+		return adr
 	end
 
 	inAdr = encode64(inAdr)
