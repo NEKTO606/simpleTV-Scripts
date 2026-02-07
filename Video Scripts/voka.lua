@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Voka" https://voka.tv (1/2/26)
+-- видеоскрипт для плейлиста "Voka" https://voka.tv (7/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: voka_pls.lua
@@ -25,51 +25,38 @@
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	
-	local function GetToken(tok)
-		local saveToken = m_simpleTV.Config.GetValue('voka_token')
-		if saveToken and tok == 'get' then
-			return saveToken
-		elseif tok == 'renew' or not saveToken then
-			local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdm9rYS5waHA'), headers = headers})
-			if rc ~= 200 then return end
-			if answer then
-				m_simpleTV.Config.SetValue('voka_token', answer)
-				return answer
-			else
-				showMsg('Нет рабочего токена', ARGB(255,255, 0, 0))
-			end
-		end
+	local function GetToken()
+		local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdm9rYS5waHA'), headers = headers})
+			if rc ~= 200 or not answer then return end
+		return answer
 	end
 	
-	local x = {}
+	local x
 	local y = 0
-	local function GetStream(token)
+	local function GetStream()
 		y = y + 1
-		if not token then
-			token = GetToken('get')
-		end
+		local token = m_simpleTV.Config.GetValue('voka_token')
+			if not token then
+				token = GetToken()
+				m_simpleTV.Config.SetValue('voka_token', token)
+			end
 		local cache = {'01t', '02t', '03t', '04i', '05i', '06i', '07t'}
 		local t = {}
 		for i = 1, #cache do
 			local adress = string.format(decode64('aHR0cHM6Ly9taW5zay1jYWNoZSVzLnZva2EudHYvdG9rXyVzL2xpdmUvcHJveHkvJXMvZGFzaC8lcy5tcGQ'), cache[i], token, id, id)
 			local rc, answer = m_simpleTV.Http.Request(session, {url = adress})
 			if rc == 200 then
-				x[#x + 1] = {}
-				x[#x].adr = adress
-			else
-				t[#t + 1] = {}
-				t[#t].rc = rc
+				x = adress
+			break
 			end
 		end
-		if #t > 0 and #x == 0 and y < 3 then
-			local tok = GetToken('renew')
-			if token then
-				GetStream(tok)
-			end
+		if not x and y < 3 then
+			m_simpleTV.Config.Remove('voka_token')
+			GetStream()
 		end
-		if #x > 0 then
-			return x[1].adr
+		if x then
+			return x
 		end
 	end
 	
