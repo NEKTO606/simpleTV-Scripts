@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "VK Видео ТВ" https://vkvideo.ru/tvchannels (4/1/26)
+-- скрапер TVS для загрузки плейлиста "VK Видео ТВ" https://vkvideo.ru/tvchannels (17/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: vkplaylive.lua
@@ -6,7 +6,9 @@
 
 local filter = {
 	{'ПРЯМОЙ ЭФИР', 'ТБВ'},
-	{'НТС-Ирбит (круглосуточная трансляция)', 'НТС-Ирбит'},
+	{'Общественное телевидение России - ОТР', 'ОТР'},
+	{'Авторадио. Круглосуточный из студии в Москве', 'Авторадио'},
+	{'Record Dance Radio (.', 'Record Dance Radio'},
 	}
 	local host = 'https://vkvideo.ru/'
 	local my_src_name = 'VK Видео ТВ'
@@ -43,7 +45,8 @@ local filter = {
 			body = 'al=1&silent_loading=1'
 		end
 		
-		headers = 'X-Requested-With: XMLHttpRequest'
+		headers = 'X-Requested-With: XMLHttpRequest\n' ..
+				  'Referer: https://vkvideo.ru/tvchannels'
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = url, body = body, headers = headers})
 			if rc ~= 200 then return end
 		answer = answer:gsub('\\', '\\\\')
@@ -67,27 +70,31 @@ local filter = {
 					t[#t + 1] = {}
 					title = unescape3(title)
 					title = title:gsub('&#33;', '!')
-					title = title:gsub('%. Прямой эфир', '')
-					title = title:gsub(', прямой эфир', '')
-					title = title:gsub('Прямой эфир ', '')
-					title = title:gsub('Прямой эфир. ', '')
-					title = title:gsub('Прямой ЭФИР ', '')
-					title = title:gsub(' Прямой эфир', '')
-					title = title:gsub('ПРЯМОЙ ЭФИР ТЕЛЕКАНАЛА ', '')
-					title = title:gsub('Телеканал ', '')
-					title = title:gsub('Прямая трансляция ', '')
+					title = title:gsub('смотрите', '')
+					title = title:gsub('Прямой эфир', '')
+					title = title:gsub('прямой эфир', '')
+					title = title:gsub('Прямой ЭФИР', '')
+					title = title:gsub('ПРЯМОЙ ЭФИР ТЕЛЕКАНАЛА', '')
+					title = title:gsub('Прямая трансляция', '')
+					title = title:gsub('прямая трансляция', '')
 					title = title:gsub('Эфир православного ', '')
-					title = title:gsub(' прямая трансляция', '')
-					title = title:gsub('телеканала ', '')
-					title = title:gsub(' Трансляция LIVE', '')
-					title = title:gsub(' (круглосуточная трансляция)', '')
-					title = title:gsub('| ', ''):gsub(' |', '')
+					title = title:gsub('Телеканала', '')
+					title = title:gsub('Телеканал', '')
+					title = title:gsub('телеканала', '')
+					title = title:gsub('ТЕЛЕКАНАЛА', '')
+					title = title:gsub('Трансляция', '')
+					title = title:gsub('(круглосуточная трансляция)', '')
+					title = title:gsub('|', '')
 					title = title:gsub('«', ''):gsub('»', '')
 					title = title:gsub('&quot;', '')
-					title = title:gsub('канала ', '')
-					title = title:gsub('Live: ', '')
-					title = title:gsub('LIVE ', '')
-					title = title:gsub(' ONLINE', '')
+					title = title:gsub('канала', '')
+					title = title:gsub('Live', '')
+					title = title:gsub('LIVE', '')
+					title = title:gsub('Эфир', '')
+					title = title:gsub('ONLINE', '')
+					title = title:gsub('^%s*', ''):gsub('%s*$', '')
+					title = title:gsub('^[.:(),-]', ''):gsub('[.:(),-]$', '')
+					title = title:gsub('[.:(),-]$', '')
 					t[#t].name = title
 					t[#t].address = host .. 'tvchannels/' .. slug
 					t[#t].logo = str.videos[i][36] or ''
