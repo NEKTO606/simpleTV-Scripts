@@ -1,5 +1,5 @@
--- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (6/11/25)
--- Copyright © 2017-2025 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (20/2/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: tricolor.lua
 -- расширение дополнения httptimeshift: tricolor-timesift_ext.lua
@@ -35,7 +35,7 @@ local filter = {
 	 return 2, 'UTF-8'
 	end
 	local function LoadFromSite()
-		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0')
+		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 12000)
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9jczEub3R0Z29vZHMucnUvYXBpL3YxL2NoYW5uZWxzLz9maWx0ZXIlNWJ0aW1lem9uZSU1ZD0rMyZwYWdlJTVibGltaXQlNWQ9YWxsJnBsYXRmb3JtPXdlYnVp')})
@@ -57,31 +57,31 @@ local filter = {
 				name = name:gsub('\\"', '"')
 				local codename = tab.data[i].attributes.code_name
 				if codename:match('Kinozal') then
-					name = 'Кинозал ' .. codename:match('%d+$')
+					name = 'Кинозал ' .. codename:match('%d+$') .. '. ' .. name
 				end
 				if tab.data[i].attributes.visible 
 				and not tab.data[i].attributes.is_radio_channel
 				and tab.data[i].attributes.description ~= '18+'
 				and tab.data[i].attributes.stream_url then
 				if not name:match('Триколор Спорт')
-					and not name:match('Уникум')
-					and not name:match('Капитан Фантастика HD')
-					and not name:match('Рыжий')
-					and not name:match('СТС Kids')
-					and not name:match('МУЛЬТ')
-					and not name:match('Мультиландия')
-					and not name:match('Мультимузыка')
-					and not name:match('Мульт HD')
-					and not name:match('Мульт')
-					and not name:match('КиноМульт')
-					and not name:match('ТипТоп HD')
-					and not name:match('Чижик HD')
-					and not name:match('Детский Мир')
-					and not name:match('TiJi')
-					and not name:match('Gulli Girl')
-					and not name:match('В гостях у сказки')
-					and not name:match('FamilyJam')
-					and not name:match('Ani')
+					-- and not name:match('Уникум')
+					-- and not name:match('Капитан Фантастика HD')
+					-- and not name:match('Рыжий')
+					-- and not name:match('СТС Kids')
+					-- and not name:match('МУЛЬТ')
+					-- and not name:match('Мультиландия')
+					-- and not name:match('Мультимузыка')
+					-- and not name:match('Мульт HD')
+					-- and not name:match('Мульт')
+					-- and not name:match('КиноМульт')
+					-- and not name:match('ТипТоп HD')
+					-- and not name:match('Чижик HD')
+					-- and not name:match('Детский Мир')
+					-- and not name:match('TiJi')
+					-- and not name:match('Gulli Girl')
+					-- and not name:match('В гостях у сказки')
+					-- and not name:match('FamilyJam')
+					-- and not name:match('Ani')
 					and not name:match('TRASH')
 					--and not name:match('Epic')
 					--and not name:match('Amedia')
