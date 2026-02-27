@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (20/2/26)
+-- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (27/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: tricolor.lua
@@ -29,7 +29,7 @@ local filter = {
 	 return t
 	end
 	function GetSettings()
-	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_' .. my_src_name .. '.m3u', logo = '..\\Channel\\logo\\Icons\\tricolor.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
+	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_tricolor.m3u', logo = '..\\Channel\\logo\\Icons\\tricolor.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
 	end
 	function GetVersion()
 	 return 2, 'UTF-8'
@@ -83,6 +83,10 @@ local filter = {
 					-- and not name:match('FamilyJam')
 					-- and not name:match('Ani')
 					and not name:match('TRASH')
+					and not name:match('НТВ Сериал')
+					and not name:match('НТВ Стиль')
+					and not name:match('НТВ Право')
+					and not name:match('AIVA')
 					--and not name:match('Epic')
 					--and not name:match('Amedia')
 					--and not name:match('A1')
