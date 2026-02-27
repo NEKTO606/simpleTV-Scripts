@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (26/1/26)
+-- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (27/2/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: beetvkz.lua
@@ -22,13 +22,13 @@ local filter = {
 	 return t
 	end
 	function GetSettings()
-	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_' .. my_src_name .. '.m3u', logo = '..\\Channel\\logo\\Icons\\beetvkz.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
+	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_beetvkz.m3u', logo = '..\\Channel\\logo\\Icons\\beetvkz.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
 	end
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
 	local function LoadFromSite()
-		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0')
+		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 12000)
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9hcGkuYmVldHYua3ovdjUvY2hhbm5lbHMuanNvbj9jbGllbnRfaWQ9M2UyODY4NWMtZmNlMC00OTk0LTlkM2EtMWRhZDI3NzZlMTZhJmNsaWVudF92ZXJzaW9uPTQuNC43LjEuMjY0MzQzMyZsb2NhbGU9cnUtS1omdGltZXpvbmU9MTgwMDAmcGFnZVtsaW1pdF09MzAwJnBhZ2Vbb2Zmc2V0XT0w')})
@@ -42,14 +42,17 @@ local filter = {
 			if not tab or not tab.data then return end
 		local t = {}
 			for i = 1, #tab.data do
+				local image
 				local name = tab.data[i].name
 				local slug = tab.data[i].slug
 				local id = tab.data[i].live_stream.streaming_uid
-				local image = tab.data[i].images[2].url_template
+				if tab.data[i].images and tab.data[i].images[2] then
+					image = tab.data[i].images[2].url_template
+				end
 				if image then
 					image = image:gsub('{width}', '250'):gsub('{height}', '250'):gsub('{crop}', '')
 				end
-					if name and slug and id then
+					if name and slug and id and not name:match('Live%s%d') then
 						t[#t + 1] = {}
 						t[#t].name = unescape3(name)
 						t[#t].address = host .. slug .. '/' .. id
