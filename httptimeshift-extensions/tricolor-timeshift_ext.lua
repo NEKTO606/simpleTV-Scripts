@@ -1,4 +1,4 @@
--- расширение дополнения httptimeshift - tricolor (7/1/26)
+-- расширение дополнения httptimeshift - tricolor (2/3/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Addons
 	function httpTimeshift_tricolor(eventType, eventParams)
 		if eventType == 'StartProcessing' then
@@ -7,10 +7,12 @@
 			then
 			 return
 			end
-			if not (eventParams.params.address:match('tricolor%.tv')
-				and m_simpleTV.User
+			
+			if not (
+				m_simpleTV.User
 				and m_simpleTV.User.tricolor
-				and m_simpleTV.User.tricolor.url_archive)
+				and m_simpleTV.User.tricolor.url_archive
+				and m_simpleTV.User.tricolor.url_tmp)
 			then
 			 return
 			end
@@ -18,6 +20,22 @@
 				local newdate = os.date("!%d/%m/%YT%H:%M:%S", temp)
 				return newdate
 			end
+			
+			local function GetTmp(url)
+					local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
+						if not session then return end
+					m_simpleTV.Http.SetTimeout(session, 8000)
+					local rc, answer = m_simpleTV.Http.Request(session, {url = url})
+						if rc ~= 200 then return end
+					local tmp = m_simpleTV.User.tricolor.url_tmp
+					local fhandle = io.open(tmp, 'w+')
+					if fhandle then
+						fhandle:write(answer)
+						fhandle:close()
+					end
+				return tmp
+			end
+			
 			if eventParams.queryType == 'Start' then
 				if eventParams.params.offset > 0 then
 					local currentTime = os.time()
@@ -25,7 +43,7 @@
 					local endTime = DateFormat(currentTime)
 					local url = m_simpleTV.User.tricolor.url_archive
 					url = url .. '&startTime=' .. startTime .. '&endTime=' .. endTime
-					eventParams.params.address = url
+					eventParams.params.address = GetTmp(url)
 				end
 			 return true
 			end
@@ -42,7 +60,7 @@
 				local progend = DateFormat(progE)
 				local url = m_simpleTV.User.tricolor.url_archive
 				url = url .. '&startTime=' .. progstart .. '&endTime=' ..  progend
-				eventParams.params.address = url
+				eventParams.params.address = GetTmp(url)
 			 return true
 			 end
 		 return true
