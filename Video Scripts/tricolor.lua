@@ -1,5 +1,5 @@
--- видеоскрипт для плейлиста "Триколор ТВ" https://tricolor.ru (10/12/25)
--- Copyright © 2017-2025 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- видеоскрипт для плейлиста "Триколор ТВ" https://tricolor.ru (2/3/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: tricolor_pls.lua
 -- расширение дополнения httptimeshift: tricolor-timesift_ext.lua
@@ -8,7 +8,6 @@
 -- http://nea-live-stream.ott.tricolor.tv/streamingGateway/GetLivePlayList?source=domashny.m3u8
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('tricolor%.tv/streamingGateway/GetLivePlayList') then return end
-	
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = '', UseLogo = 0, Once = 1})
 	end
@@ -29,9 +28,52 @@
 	
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
+	
+	local function DeObfuscate(token)
+		local str = ''
+		local l = token:sub(-1)
+		token =  l .. token:sub(1, -2)
+		token = string.reverse(token)
+		local f = tonumber(token:sub(1, 1))
+			if not f then return 'Error' end
+		f = f + 1
+		token = token:sub(2)
+		for i = 1, #token do
+			if i % f ~= 0 then
+				str = str .. token:sub(i, i)
+			end
+		end
+		return str
+	end
+	
+	local function Obfuscate(token)
+		local str = ''
+		local numb = '234567'
+		local cs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+		local rand_num = math.ceil(math.random() * #numb)
+		local num = tonumber(numb:sub(rand_num,rand_num))
+		str = num
+		for i = 1, #token do
+			local rand_char = math.ceil(math.random() * #cs)
+			local c = cs:sub(rand_char,rand_char)
+			str = str .. token:sub(i, i)
+			if i % num == 0 then
+				str = str .. c
+			end
+		end
+		str = string.reverse(str)
+		local f = str:sub(1, 1)
+		str = str:sub(2) .. f
+		return str
+	end
+	
+	-- str = Obfuscate(token)
+	-- str = DeObfuscate(str)
+	-- debug_in_file(str .. '\n', "D:\xxx.txt")
+	-- do return end
 	
 	local function CheckToken(token)
 		local stat
@@ -59,19 +101,28 @@
 	local function GetToken()
 		local saveToken = m_simpleTV.Config.GetValue('tricolor_token')
 		local tok
-		if saveToken and CheckToken(saveToken) == 200 then
-			tok = saveToken
-		else
-			local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdGtuLnBocD90dj10cmtscg'), headers = headers})
-			if rc ~= 200 then return end
+		local status
+		if saveToken then
+			saveToken = DeObfuscate(saveToken)
+			if saveToken ~= 'Error' then
+				status = CheckToken(saveToken)
+				if status == 200 then
+					tok = saveToken
+				end
+			end
+		end
+		if not saveToken or status ~= 200 or saveToken == 'Error' then
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKGRlY29kZTY0KCdKUzFFY0RSRScpLCBNZDUpIC4uICc6ICcgLi4gbV9zaW1wbGVUVi5Db21tb24uQ3J5cHRvZ3JhcGhpY0hhc2gob3MuZGF0ZSgnJVk8QHwjPiVtPCN8QD4lZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = assert(loadstring(code))()
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdGtuLW5ldy5waHA/dHY9dHJrbHI'), headers = headers})
+			if rc ~= 200 or not answer then return end
 				if answer then
-					answer = decode64(answer)
-					if CheckToken(answer) == 200 then
-						tok = answer
-						m_simpleTV.Config.SetValue('tricolor_token', tok)
+					tok = decode64(answer)
+					status = CheckToken(tok)
+					if status == 200 then
+						m_simpleTV.Config.SetValue('tricolor_token', Obfuscate(tok))
 					else
-						showMsg(CheckToken(answer), ARGB(255,255, 0, 0))
+						showMsg(status, ARGB(255,255, 0, 0))
 					end
 				else
 					showMsg('Нет рабочего токена', ARGB(255,255, 0, 0))
@@ -98,7 +149,17 @@
 	
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 		if rc ~= 200 then return end
-
+		
+	local tmpName = m_simpleTV.Common.GetTmpName()
+	
+	m_simpleTV.User.tricolor.url_tmp = tmpName
+	
+	local fhandle = io.open(tmpName, 'w+')
+	if fhandle then
+		fhandle:write(answer)
+		fhandle:close()
+	end
+	
 	local t = {}
 	for w in answer:gmatch('EXT%-X%-STREAM%-INF.-\n') do
 		local bw = w:match('BANDWIDTH=(%d+)')
@@ -110,11 +171,11 @@
 			if res then
 				t[#t].Name = res .. 'p (' .. bw .. ' кбит/с)'
 				t[#t].Id = tonumber(res)
-				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-maxheight=%s', inAdr, res)
+				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-maxheight=%s', tmpName, res)
 			else
 				t[#t].Name = bw .. ' кбит/с'
 				t[#t].Id = bw
-				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', inAdr, bw)
+				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', tmpName, bw)
 			end
 		end
 	end
@@ -149,8 +210,8 @@
 			m_simpleTV.OSD.ShowSelect_UTF8('⚙ Качество', index - 1, t, 5000, 32 + 64 + 128 + 8)
 		end
 	end
-	
-	m_simpleTV.Control.CurrentAddress = t[index].Address 
+
+	m_simpleTV.Control.CurrentAddress = t[index].Address
 
 	function tricolorSaveQuality(obj, id)
 		m_simpleTV.Config.SetValue('tricolor_qlty', id)
