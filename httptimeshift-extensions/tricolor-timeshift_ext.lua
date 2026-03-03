@@ -1,4 +1,4 @@
--- расширение дополнения httptimeshift - tricolor (2/3/26)
+-- расширение дополнения httptimeshift - tricolor (3/3/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Addons
 	function httpTimeshift_tricolor(eventType, eventParams)
 		if eventType == 'StartProcessing' then
@@ -38,12 +38,14 @@
 			
 			if eventParams.queryType == 'Start' then
 				if eventParams.params.offset > 0 then
-					local currentTime = os.time()
-					local startTime = DateFormat((currentTime - (eventParams.params.offset / 1000)))
+					local startTime = DateFormat(os.time() - (eventParams.params.offset / 1000))
 					local endTime = DateFormat(currentTime)
 					local url = m_simpleTV.User.tricolor.url_archive
-					url = url .. '&startTime=' .. startTime .. '&endTime=' .. endTime
-					eventParams.params.address = GetTmp(url)
+					url = url .. '&startTime=' .. startTime .. '&endTime=' .. endTime .. '&curPos=' .. startTime
+					local path = GetTmp(url)
+						if not path then return end
+					m_simpleTV.Common.Sleep(1000)
+					eventParams.params.address = path
 				end
 			 return true
 			end
@@ -60,7 +62,10 @@
 				local progend = DateFormat(progE)
 				local url = m_simpleTV.User.tricolor.url_archive
 				url = url .. '&startTime=' .. progstart .. '&endTime=' ..  progend
-				eventParams.params.address = GetTmp(url)
+				local path = GetTmp(url)
+					if not path then return end
+				m_simpleTV.Common.Sleep(1000)
+				eventParams.params.address = path
 			 return true
 			 end
 		 return true
