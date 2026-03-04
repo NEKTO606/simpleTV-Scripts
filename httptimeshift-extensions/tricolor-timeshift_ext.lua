@@ -1,6 +1,13 @@
--- расширение дополнения httptimeshift - tricolor (3/3/26)
+-- расширение дополнения httptimeshift - tricolor (4/3/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Addons
 	function httpTimeshift_tricolor(eventType, eventParams)
+		if eventParams.queryType == 'OnStop'
+			and m_simpleTV.User
+			and m_simpleTV.User.tricolor
+			and m_simpleTV.User.tricolor.url_tmp
+		then
+			os.remove(m_simpleTV.User.tricolor.url_tmp)
+		end
 		if eventType == 'StartProcessing' then
 			if not eventParams.params
 				or not eventParams.params.address
@@ -8,8 +15,8 @@
 			 return
 			end
 			
-			if not (
-				m_simpleTV.User
+			if not (eventParams.params.address:match('tricolor_out%.m3u8')
+				and m_simpleTV.User
 				and m_simpleTV.User.tricolor
 				and m_simpleTV.User.tricolor.url_archive
 				and m_simpleTV.User.tricolor.url_tmp)
@@ -20,7 +27,6 @@
 				local newdate = os.date("!%d/%m/%YT%H:%M:%S", temp)
 				return newdate
 			end
-			
 			local function GetTmp(url)
 					local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 						if not session then return end
