@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Voka" https://voka.tv (7/2/26)
+-- видеоскрипт для плейлиста "Voka" https://voka.tv (6/3/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: voka_pls.lua
@@ -25,21 +25,29 @@
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	
-	local function GetToken()
+	local function GetToken(token, op)
+		
+		local tok
+		if token then
+			tok = '&token=' .. token
+		else 
+			tok = ''
+		end
 		local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdm9rYS5waHA'), headers = headers})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = 'http://o96889no.beget.tech/voka.php?op=' .. op .. tok, headers = headers})
 			if rc ~= 200 or not answer then return end
 		return answer
 	end
 	
 	local x
-	local y = 0
 	local function GetStream()
-		y = y + 1
 		local token = m_simpleTV.Config.GetValue('voka_token')
 			if not token then
-				token = GetToken()
+				token = GetToken('', 'new')
 				m_simpleTV.Config.SetValue('voka_token', token)
+			elseif token and GetToken(token, 'check') ~= 'true' then
+				m_simpleTV.Config.Remove('voka_token')
+				GetStream()
 			end
 		local cache = {'01t', '02t', '03t', '04i', '05i', '06i', '07t'}
 		local t = {}
@@ -51,13 +59,7 @@
 			break
 			end
 		end
-		if not x and y < 3 then
-			m_simpleTV.Config.Remove('voka_token')
-			GetStream()
-		end
-		if x then
-			return x
-		end
+	 return x
 	end
 	
 	local adr = GetStream()
