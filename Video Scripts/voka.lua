@@ -34,7 +34,7 @@
 			tok = ''
 		end
 		local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = 'http://o96889no.beget.tech/voka.php?op=' .. op .. tok, headers = headers})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdm9rYS5waHA/b3A9') .. op .. tok, headers = headers})
 			if rc ~= 200 or not answer then return end
 		return answer
 	end
