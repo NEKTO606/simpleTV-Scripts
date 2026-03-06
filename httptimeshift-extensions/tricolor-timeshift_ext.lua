@@ -33,7 +33,6 @@
 					end
 				return tmp
 			end
-			
 			if eventParams.queryType == 'Start' then
 				if eventParams.params.offset > 0 then
 					local startTime = DateFormat(os.time() - (eventParams.params.offset / 1000))
@@ -70,5 +69,6 @@
 		end
 	end
 	httpTimeshift.addEventExecutor('httpTimeshift_tricolor')
+
 
 
