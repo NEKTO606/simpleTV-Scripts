@@ -7,7 +7,6 @@
 			then
 			 return
 			end
-			
 			if not (eventParams.params.address:match('tricolor_out%.m3u8')
 				and m_simpleTV.User
 				and m_simpleTV.User.tricolor
@@ -71,4 +70,5 @@
 		end
 	end
 	httpTimeshift.addEventExecutor('httpTimeshift_tricolor')
+
 
