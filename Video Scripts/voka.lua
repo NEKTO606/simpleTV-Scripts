@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Voka" https://voka.tv (6/3/26)
+-- видеоскрипт для плейлиста "Voka" https://voka.tv (10/3/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: voka_pls.lua
@@ -16,61 +16,23 @@
 	m_simpleTV.Control.CurrentAddress = 'error'
 	local id = inAdr:match('([^/]%d*)$')
 	
+	if m_simpleTV.Config.GetValue('voka_token') then
+		m_simpleTV.Config.Remove('voka_token')
+	end
+	
+	local adr = string.format(decode64('aHR0cDovLzQ2LjUzLjIwOC40L2xpdmUvJXMubTN1OA'), id)
+	
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
-	local function showMsg(str, color)
-		local t = {text = str, showTime = 1000 * 2, color = color, id = 'channelName'}
-		m_simpleTV.OSD.ShowMessageT(t)
-	end
-	
-	local function GetToken(token, op)
-		
-		local tok
-		if token then
-			tok = '&token=' .. token
-		else 
-			tok = ''
-		end
-		local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdm9rYS5waHA/b3A9') .. op .. tok, headers = headers})
-			if rc ~= 200 or not answer then return end
-		return answer
-	end
-	
-	local x
-	local function GetStream()
-		local token = m_simpleTV.Config.GetValue('voka_token')
-			if not token then
-				token = GetToken('', 'new')
-				m_simpleTV.Config.SetValue('voka_token', token)
-			elseif token and GetToken(token, 'check') ~= 'true' then
-				m_simpleTV.Config.Remove('voka_token')
-				GetStream()
-			end
-		local cache = {'01t', '02t', '03t', '04i', '05i', '06i', '07t'}
-		local t = {}
-		for i = 1, #cache do
-			local adress = string.format(decode64('aHR0cHM6Ly9taW5zay1jYWNoZSVzLnZva2EudHYvdG9rXyVzL2xpdmUvcHJveHkvJXMvZGFzaC8lcy5tcGQ'), cache[i], token, id, id)
-			local rc, answer = m_simpleTV.Http.Request(session, {url = adress})
-			if rc == 200 then
-				x = adress
-			break
-			end
-		end
-	 return x
-	end
-	
-	local adr = GetStream()
-		if not adr then return end
 	local rc, answer = m_simpleTV.Http.Request(session, {url = adr})
 		if rc ~= 200 then return end
 		
 	local t = {}
-		for w in answer:gmatch('<Representation id="vid(.-)>') do
-				local bw = w:match('bandwidth="([^"]%d+)')
-				local res = w:match('height="([^"]%d+)')
+		for w in answer:gmatch('#EXT%-X%-STREAM%-INF(.-)\n') do
+				local bw = w:match('BANDWIDTH=(%d+)')
+				local res = w:match('RESOLUTION=%d+x(%d+)')
 				bw = tonumber(bw)
 				if bw and res and bw > 1000 then
 					bw = math.ceil(bw / 100000) * 100
