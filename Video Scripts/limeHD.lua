@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "LimeHD", "LimeHD+" https://limehd.tv (31/1/24)
+-- видеоскрипт для плейлиста "LimeHD", "LimeHD+" https://limehd.tv (15/3/26)
 -- Copyright © 2017-2024 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: LimeHD_pls.lua, LimeHD+_pls.lua
@@ -46,6 +46,7 @@
 	local retAdr, url_archive, archive_hours
 	if inAdr:match('/channel/') then
 		retAdr, url_archive = getStreamFromApp(inAdr)
+		retAdr = retAdr:gsub('/mhd.', '/cdn-lb.')
 	else
 		retAdr, url_archive, archive_hours = getStream(inAdr)
 	end
