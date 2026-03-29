@@ -1,11 +1,13 @@
--- видеоскрипт для сайта https://vkvideo.ru (11/1/26)
+-- видеоскрипт для сайта https://vkvideo.ru (29/3/26)
 -- Copyright © 2017-2026 Nexterr,NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
 -- https://vkvideo.ru/live-116061363_456244502
 -- https://live.vkvideo.ru/jove
 -- https://live.vkvideo.ru/app/embed/sky_line
+-- https://live.vkvideo.ru/app/embed/varball/stream/setanta2?tab=slots
 -- https://vkplay.live/c1ymba
+
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://vkvideo%.ru/tvchannels/')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://live%.vkvideo%.ru')
@@ -43,8 +45,16 @@
 		retAdr = retAdr:gsub('\\/', '/')
 		
 	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live')  then
-		local user = inAdr:match('([^/]+)$')
-		local rc, answer = m_simpleTV.Http.Request(session, {url = 'https://api.live.vkvideo.ru/v1/channel/' .. user .. '/stream/slot/default?'})
+		inAdr =inAdr:gsub('%?.+', '')
+		local user, stream, url
+		if inAdr:match('live%.vkvideo%.ru/app/embed/.-/stream/.-$') then
+			user, stream = inAdr:match('^https://live%.vkvideo%.ru/app/embed/(.-)/stream/(.-)$')
+			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/%s?', user, stream)
+		else
+			user = inAdr:match('([^/]+)$')
+			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/default?', user)
+		end
+		local rc, answer = m_simpleTV.Http.Request(session, {url = url})
 			if rc ~= 200 then return end
 		answer = answer:gsub('%[%]', '{}')
 		require 'json'
