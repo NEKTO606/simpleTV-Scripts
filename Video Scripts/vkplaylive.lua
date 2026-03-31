@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vkvideo.ru (29/3/26)
+-- видеоскрипт для сайта https://vkvideo.ru (31/3/26)
 -- Copyright © 2017-2026 Nexterr,NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
@@ -42,6 +42,10 @@
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = 'https://api.vkvideo.ru/method/video.get?v=5.269&client_id=52461373', body = body})
 			if rc ~= 200 then return end
 		retAdr = answer:match('cmaf":"([^"]+)')
+		if not retAdr then
+			retAdr =  answer:match('hls":"([^"]+)')
+		end
+		if not retAdr then return end
 		retAdr = retAdr:gsub('\\/', '/')
 		
 	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live')  then
@@ -105,7 +109,7 @@
 		rs = 'height="([^"]%d+)'
 		bn = 'bandwidth="([^"]%d+)'
 		dr = '<vk:XPlaybackDuration>([^<]%d+)'
-	elseif retAdr:match('%.m3u8$') then
+	elseif retAdr:match('%.m3u8') then
 		gm = '#EXT%-X%-STREAM%-INF:([^\n]+)'
 		rs = 'resolution=%d+x(%d+)'
 		bn = 'bandwidth=(%d+)'
