@@ -42,6 +42,7 @@ local filter = {
 				t[i] = {}
 				t[i].name = title:gsub(' смотреть онлайн', '')
 				t[i].address = url .. adr
+				t[i].group = 'Взрослые'
 				i = i + 1
 			end
 			if i == 1 then return end
