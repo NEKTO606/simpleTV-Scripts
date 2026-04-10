@@ -1,22 +1,22 @@
--- видеоскрипт для плейлиста "Beeline TV" https://beeline.tv (9/4/26)
+-- видеоскрипт для плейлиста "Beeline TV" https://beeline.tv (10/4/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts/
 -- ## необходим ##
 -- скрапер TVS: beeline-tv_pls.lua
 -- расширение дополнения httptimeshift: beeline-timeshift_ext.lua
 -- ## открывает подобные ссылки ##
 -- http://video.beeline.tv/live/d/channel056.isml/manifest-stb.mpd/051d258f0f94443c1f16409274228eca3ae2344ece22d0d13a74c260272747ac
-		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
-		if not m_simpleTV.Control.CurrentAddress:match('^https?://video%.beeline%.tv/live/')
+	if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
+	if not m_simpleTV.Control.CurrentAddress:match('^https?://video%.beeline%.tv/live/')
 		then return end
-	local inAdr = m_simpleTV.Control.CurrentAddress
-	local x  = inAdr:match('([^/]+)$')
-		if #x ~= 64 or x:match('[={$:-_%u]') then return end
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = '', UseLogo = 0, Once = 1})
 	end
+	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
+	local x  = inAdr:match('([^/]+)$')
+		if #x ~= 64 or x:match('[={$:-_%u]') then return end
 	m_simpleTV.Control.ChangeAddress = 'Yes'
-	m_simpleTV.Control.CurrentAddress = 'error'
+	m_simpleTV.Control.CurrentAddress = ''
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
