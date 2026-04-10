@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (27/2/26)
+-- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (10/4/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: beetvkz.lua
@@ -31,7 +31,7 @@ local filter = {
 		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 12000)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9hcGkuYmVldHYua3ovdjUvY2hhbm5lbHMuanNvbj9jbGllbnRfaWQ9M2UyODY4NWMtZmNlMC00OTk0LTlkM2EtMWRhZDI3NzZlMTZhJmNsaWVudF92ZXJzaW9uPTQuNC43LjEuMjY0MzQzMyZsb2NhbGU9cnUtS1omdGltZXpvbmU9MTgwMDAmcGFnZVtsaW1pdF09MzAwJnBhZ2Vbb2Zmc2V0XT0w')})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVldHYucGhw')})
 			if rc ~= 200 then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
