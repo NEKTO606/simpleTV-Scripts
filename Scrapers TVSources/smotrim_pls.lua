@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Смотрим" https://smotrim.ru (24/3/26)
+-- скрапер TVS для загрузки плейлиста "Смотрим" https://smotrim.ru (13/4/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: smotrim.ru.lua, mediavitrina.lua
@@ -49,11 +49,11 @@ local filter = {
 		
 	local sum = {}
 	local function LoadFromSite(ttt)
-		local body = '{"query":"query ChannelTab($id: Int!, $page: Int = 1) {\n\ttab(id: $id) {\n\t\tid\n\t\tname\n\t\tdefaultChannel {\n\t\t\tid\n\t\t}\n\t\tchannelsPaginate(first: 20, page: $page) {\n\t\t\tdata {\n\t\t\t\timages(linkTypes: [Icon]) {\n\t\t\t\t\tlinkType\n\t\t\t\t\tpresets {\n\t\t\t\t\t\tname\n\t\t\t\t\t\tlink\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t\tslug\n\t\t\t\turl\n\t\t\t\tmostPopular {\n\t\t\t\t\tid\n\t\t\t\t\tpublicId\n\t\t\t\t\tepisode {\n\t\t\t\t\t\tbrand {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\timages(linkTypes: [SplashScreen]) {\n\t\t\t\t\t\t... on Image {\n\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\tlinkType\n\t\t\t\t\t\t\tpresets {\n\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\tlink\n\t\t\t\t\t\t\t\twidth\n\t\t\t\t\t\t\t\theight\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tjustEnded {\n\t\t\t\t\tid\n\t\t\t\t\ttitle\n\t\t\t\t\t# TODO: Do it later\n\t\t\t\t\timages(linkTypes: [SplashScreen]) {\n\t\t\t\t\t\t... on Image {\n\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\tlinkType\n\t\t\t\t\t\t\tpresets {\n\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\tlink\n\t\t\t\t\t\t\t\twidth\n\t\t\t\t\t\t\t\theight\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfullVideo {\n\t\t\t\t\t\tpublicId\n\t\t\t\t\t}\n\t\t\t\t\tbrand {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\taffiliation {\n\t\t\t\t\tcode\n\t\t\t\t\tenum\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tvitrinaStreams {\n\t\t\t\t\tid\n\t\t\t\t\ttvlightWeb\n\t\t\t\t\tsourceWeb\n\t\t\t\t}\n\t\t\t\tprogramListInEpg {\n\t\t\t\t\tdate\n\t\t\t\t\tlabel\n\t\t\t\t\tlist {\n\t\t\t\t\t\t... on EPGProgramDTO {\n\n\t\t\t\t\t\t\tprogramId\n\t\t\t\t\t\t\tageRestriction\n\t\t\t\t\t\t\tendDateTime\n\t\t\t\t\t\t\tdurationInMinutes\n\t\t\t\t\t\t\thasSubtitles\n\t\t\t\t\t\t\tisPremiere\n\t\t\t\t\t\t\tgenre\n\t\t\t\t\t\t\tprogramName\n\t\t\t\t\t\t\tstartDateTime\n\t\t\t\t\t\t\tbrand {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tepisode {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\tfullVideo {\n\t\t\t\t\t\t\t\t\tpublicId\n\t\t\t\t\t\t\t\t\tplaylistContext\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t\tpaginatorInfo {\n\t\t\t\thasMorePages\n\t\t\t\tcurrentPage\n\t\t\t}\n\t\t}\n\t}\n}","variables":{"id":1,"page":1},"operationName":"ChannelTab"}'
+		local body = '{"query":"query ChannelTab($id: Int!, $page: Int = 1) {\n\ttab(id: $id) {\n\t\tid\n\t\tname\n\t\tdefaultChannel {\n\t\t\tid\n\t\t}\n\t\tchannelsPaginate(first: 20, page: $page) {\n\t\t\tdata {\n\t\t\t\timages(linkTypes: [Icon]) {\n\t\t\t\t\tlinkType\n\t\t\t\t\tpresets {\n\t\t\t\t\t\tname\n\t\t\t\t\t\tlink\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t\tslug\n\t\t\t\turl\n\t\t\t\tmostPopular {\n\t\t\t\t\tid\n\t\t\t\t\tpublicId\n\t\t\t\t\tepisode {\n\t\t\t\t\t\tbrand {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t}\n\t\t\t\t\t\timages(linkTypes: [SplashScreen]) {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\tlinkType\n\t\t\t\t\t\t\tpresets {\n\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\tlink\n\t\t\t\t\t\t\t\twidth\n\t\t\t\t\t\t\t\theight\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tjustEnded {\n\t\t\t\t\tid\n\t\t\t\t\ttitle\n\t\t\t\t\t# TODO: Do it later\n\t\t\t\t\timages(linkTypes: [SplashScreen]) {\n\t\t\t\t\t\t... on Image {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\tlinkType\n\t\t\t\t\t\t\tpresets {\n\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\tlink\n\t\t\t\t\t\t\t\twidth\n\t\t\t\t\t\t\t\theight\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfullVideo {\n\t\t\t\t\t\tpublicId\n\t\t\t\t\t}\n\t\t\t\t\tbrand {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\taffiliation {\n\t\t\t\t\tcode\n\t\t\t\t\tenum\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tvitrinaStreams {\n\t\t\t\t\tid\n\t\t\t\t\ttvlightWeb\n\t\t\t\t\tsourceWeb\n\t\t\t\t}\n\t\t\t\tprogramListInEpg {\n\t\t\t\t\tdate\n\t\t\t\t\tlabel\n\t\t\t\t\tlist {\n\t\t\t\t\t\t... on EPGProgramDTO {\n\t\t\t\t\t\t\tprogramId\n\t\t\t\t\t\t\tageRestriction\n\t\t\t\t\t\t\tendDateTime\n\t\t\t\t\t\t\tdurationInMinutes\n\t\t\t\t\t\t\thasSubtitles\n\t\t\t\t\t\t\tisPremiere\n\t\t\t\t\t\t\tgenre\n\t\t\t\t\t\t\tprogramName\n\t\t\t\t\t\t\tstartDateTime\n\t\t\t\t\t\t\tbrand {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tepisode {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\tfullVideo {\n\t\t\t\t\t\t\t\t\tpublicId\n\t\t\t\t\t\t\t\t\tplaylistContext\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t\tpaginatorInfo {\n\t\t\t\thasMorePages\n\t\t\t\tcurrentPage\n\t\t\t}\n\t\t}\n\t}\n}","variables":{"id":1,"page":4},"operationName":"ChannelTab"}'
 		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0')
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 8000)
-		local url = decode64('aHR0cHM6Ly9hcGlzLnNtb3RyaW0ucnUvZ3JhcGhxbD9wYWdlPUNoYW5uZWxUYWImYm9keT1kZGYwMWQ2ZjI0YjVlOGQxZGFlY2Y5Zjg5MDFjMDdmZCZ2YXJzPQ') .. ttt
+		local url = decode64('aHR0cHM6Ly9hcGlzLnNtb3RyaW0ucnUvZ3JhcGhxbD9wYWdlPUNoYW5uZWxUYWImYm9keT1hMzVjOGRjYzVkOGJjMmM3MjU2OTZkYzU5M2FkOTk3NSZ2YXJzPQ') .. ttt
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = url, body = body})
 			if rc ~= 200 then return end
 		answer = answer:gsub('\\', '\\\\')
@@ -69,7 +69,7 @@ local filter = {
 				local id = tab.data.tab.channelsPaginate.data[i].id
 				local title = tab.data.tab.channelsPaginate.data[i].title
 				title = unescape3(title)
-				if id and title and not title:match('Радио')then
+				if id and title then
 					t[#t + 1] = {}
 					t[#t].name = title
 					if tab.data.tab.channelsPaginate.data[i].affiliation
@@ -84,6 +84,9 @@ local filter = {
 						t[#t].address = host .. '/channel/' .. id
 					end
 					t[#t].logo = tab.data.tab.channelsPaginate.data[i].images[1].presets[3].link or ''
+					if title:match('Радио') then
+						t[#t].group = 'Радио'
+					end
 				end
 			end
 		for i=1,#t do
