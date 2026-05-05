@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Voka" https://voka.tv (4/5/26)
+-- скрапер TVS для загрузки плейлиста "Voka" https://voka.tv (5/5/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: voka.lua
@@ -46,13 +46,13 @@ local filter = {
 			local t = {}
 				for i, v in pairs(tab) do
 					if v[1] and v[2] and v[3] then
-						local name = v[2]
+						local name = v[4]
 						t[#t + 1] = {}
 						t[#t].name = name:gsub('%s%(тест%)', '')
-						t[#t].address = host .. v[1]
-						t[#t].logo = string.format('https://resizer.voka.tv/rosing-voka-production/%s_90x90c.jpg', v[3])
-						if tonumber(v[4]) > 0 then
-							t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s"', v[4])
+						t[#t].address = host .. v[3]
+						t[#t].logo = string.format('https://resizer.voka.tv/rosing-voka-production/%s_90x90c.jpg', v[2])
+						if tonumber(v[5]) > 0 then
+							t[#t].RawM3UString = string.format('catchup="append" catchup-days="%s" catchup-source="?stream_start_offset=${offset}000000"', v[5])
 						end
 					end
 				end
