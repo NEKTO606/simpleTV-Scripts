@@ -50,11 +50,10 @@ local filter = {
 			then return end		
 		local t = {}
 			for i = 1, #tab.data.tabs[1].channels do
-				local slug = tab.data.tabs[1].channels[i].slug
+				local id = tab.data.tabs[1].channels[i].id
 				local title = tab.data.tabs[1].channels[i].title
 				title = unescape3(title)
-				
-				if slug and title then
+				if id and title then
 					t[#t + 1] = {}
 					t[#t].name = title
 					if tab.data.tabs[1].channels[i].vitrinaStreams
@@ -63,7 +62,7 @@ local filter = {
 					then
 						t[#t].address = tab.data.tabs[1].channels[i].vitrinaStreams[1].sourceWeb .. '$OPT:INT-SCRIPT-PARAMS=smotrim.ru'
 					else
-						t[#t].address = host .. slug
+						t[#t].address = host .. '/channel/' .. id
 					end
 					for x = 1, #tab.data.tabs[1].channels[i].images[1].presets do
 						if tab.data.tabs[1].channels[i].images[1].presets[x].name == 'Small' then
