@@ -1,5 +1,5 @@
--- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (27/2/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "Триколор ТВ" https://tricolor.ru (14/5/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: tricolor.lua
 -- расширение дополнения httptimeshift: tricolor-timesift_ext.lua
@@ -48,6 +48,7 @@ local filter = {
 		answer = answer:gsub('is%-radio%-channel', 'is_radio_channel')
 		answer = answer:gsub('code%-name', 'code_name')
 		answer = answer:gsub('catchup%-url', 'catchup_url')
+		answer = answer:gsub('thumbnail%-url', 'thumbnail_url')
 		require 'json'
 		local err, tab = pcall(json.decode, answer)
 			if not tab or not tab.data then return end
@@ -64,24 +65,24 @@ local filter = {
 				and tab.data[i].attributes.description ~= '18+'
 				and tab.data[i].attributes.stream_url then
 				if not name:match('Триколор Спорт')
-					-- and not name:match('Уникум')
-					-- and not name:match('Капитан Фантастика HD')
-					-- and not name:match('Рыжий')
-					-- and not name:match('СТС Kids')
-					-- and not name:match('МУЛЬТ')
-					-- and not name:match('Мультиландия')
-					-- and not name:match('Мультимузыка')
-					-- and not name:match('Мульт HD')
-					-- and not name:match('Мульт')
-					-- and not name:match('КиноМульт')
-					-- and not name:match('ТипТоп HD')
-					-- and not name:match('Чижик HD')
-					-- and not name:match('Детский Мир')
-					-- and not name:match('TiJi')
-					-- and not name:match('Gulli Girl')
-					-- and not name:match('В гостях у сказки')
-					-- and not name:match('FamilyJam')
-					-- and not name:match('Ani')
+					and not name:match('Уникум')
+					and not name:match('Капитан Фантастика HD')
+					and not name:match('Рыжий')
+					and not name:match('СТС Kids')
+					and not name:match('МУЛЬТ')
+					and not name:match('Мультиландия')
+					and not name:match('Мультимузыка')
+					and not name:match('Мульт HD')
+					and not name:match('Мульт')
+					and not name:match('КиноМульт')
+					and not name:match('ТипТоп HD')
+					and not name:match('Чижик HD')
+					and not name:match('Детский Мир')
+					and not name:match('TiJi')
+					and not name:match('Gulli Girl')
+					and not name:match('В гостях у сказки')
+					and not name:match('FamilyJam')
+					and not name:match('Ani')
 					and not name:match('TRASH')
 					and not name:match('НТВ Сериал')
 					and not name:match('НТВ Стиль')
@@ -101,6 +102,9 @@ local filter = {
 							t[#t].address = url
 							if tab.data[i].attributes.catchup_url ~= url then
 								t[#t].RawM3UString = 'catchup="default" catchup-days="7"'
+							end
+							if tab.data[i].attributes.thumbnail_url then
+								t[#t].logo = tab.data[i].attributes.thumbnail_url:gsub('%/%?platform=webui', '')
 							end
 						end
 					end
