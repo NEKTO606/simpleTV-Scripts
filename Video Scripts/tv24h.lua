@@ -1,5 +1,5 @@
--- видеоскрипт для плейлиста "24часаТВ" https://24h.tv (6/6/25)
--- Copyright © 2017-2024 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
+-- видеоскрипт для плейлиста "24часаТВ" https://24h.tv (2/6/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: tv24h_pls.lua
 -- расширение дополнения httptimeshift: tv24h-timeshift_ext.lua
@@ -149,15 +149,19 @@
 	end
 	
 	local function CheckToken(token)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly8yNGh0di5wbGF0Zm9ybTI0LnR2L3YyL3VzZXJzL3NlbGYvY2hhbm5lbF9saXN0P2FjY2Vzc190b2tlbj0') .. token})
-		return rc
+		if token then
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly8yNGh0di5wbGF0Zm9ybTI0LnR2L3YyL3VzZXJzL3NlbGYvY2hhbm5lbF9saXN0P2FjY2Vzc190b2tlbj0') .. token})
+			return rc
+		end
 	end
 	
 	local function GetExtToken()
 		local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
 		local headers = loadstring(code)()
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvMjR0di5waHA'), headers = headers})
+		if rc ~= -1 then
 			if rc ~= 200 or not answer then return end
+		end
 		return answer
 	end
 	
