@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "ОККО" https://okko.tv (29/5/26)
+-- видеоскрипт для плейлиста "ОККО" https://okko.tv (2/6/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: 'okko_pls.lua
@@ -130,22 +130,22 @@
 	   end
 	end
 	
-	--if #x > 0 and GetKey(tab.elements.items[1].id) then
-		--for i = 1, #x do
-			--x[i].Address = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', x[i].Address, decode64(GetKey(tab.elements.items[1].id)))
-		--end
-	--end
+	if #x > 0 and GetKey(tab.elements.items[1].id) then
+		for i = 1, #x do
+			x[i].Address = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', x[i].Address, decode64(GetKey(tab.elements.items[1].id)))
+		end
+	end
 	
 	for i = 1, #tab.elements.items[1].assets.items do
-		--if GetKey(tab.elements.items[1].id) then
-			--adr = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', tab.elements.items[1].assets.items[i].url, decode64(GetKey(tab.elements.items[1].id)))
-		--else
+		if GetKey(tab.elements.items[1].id) then
+			adr = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', tab.elements.items[1].assets.items[i].url, decode64(GetKey(tab.elements.items[1].id)))
+		else
 			if tab.elements.items[1].assets.items[i].media.drmType == 'NO_DRM'
 			and tab.elements.items[1].assets.items[i].url:match('m3u8$')
 			then
 				adr = tab.elements.items[1].assets.items[i].url
 			end
-		--end
+		end
 	end
 	if not adr then return end
 	
