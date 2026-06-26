@@ -1,10 +1,10 @@
--- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (2/2/26)
+-- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (26/6/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: ntvplus_pls.lua
 -- видеоскприпт: mediavitrina.lua
 -- ## открывает ссылки ##
--- https://ntvplus.tv/44
+-- https://ntvplus.tv/channel/appetitnyj-659
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://ntvplus%.tv') then return end
 	if m_simpleTV.Control.MainMode == 0 then
@@ -12,30 +12,46 @@
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT.+', '')
-	local id = inAdr:match('([^/]%d+)$')
+	local id = inAdr:match('([^-]%d+)$')
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
-	local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-	local rc, url = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbnR2LnBocD9jPQ') .. id, headers = headers})
 	
-	if url and url:match('mediavitrina') then
+	local kuka
+	if m_simpleTV.Config.GetValue('ntv_token') then
+		kuka = decode64(m_simpleTV.Config.GetValue('ntv_token'))
+	else
+		local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+		local headers = loadstring(code)()
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbnR2LnBocA'), headers = headers})
+			if rc ~= 200 or not answer then return end
+		m_simpleTV.Config.SetValue('ntv_token', answer)
+		kuka = decode64(answer)
+	end
+	local url = string.format(decode64('aHR0cHM6Ly9udHZwbHVzLnR2L3Jlc3Qvd2ViL2NoYW5uZWxzLyVzL3BsYXliYWNrLW9wdGlvbnM'), id)
+	local rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = kuka})
+		if rc ~= 200 or not answer then return end
+	if answer:match('"type":"([^"]+)') == 'vitrinatv' then
+		local vitrina_url = answer:match('"src":"([^"]+)')
 		m_simpleTV.Control.ChangeAddress = 'No'
-		m_simpleTV.Control.CurrentAddress = url .. '$OPT:INT-SCRIPT-PARAMS=ntvplus.tv'
+		m_simpleTV.Control.CurrentAddress = vitrina_url .. '$OPT:INT-SCRIPT-PARAMS=ntvplus.tv'
 		dofile(m_simpleTV.MainScriptDir .. 'user/video/video.lua')
 	 return
 	end
-	
-		if rc ~= 200 or not url then return end
-	local rc, answer = m_simpleTV.Http.Request(session, {url = url})
+	local content_id = answer:match('contentId":"([^"]+)')
+	local user_id = answer:match('userId":"([^"]+)')
+	local session_id = answer:match('sessionId":"([^"]+)')
+	local ts = answer:match('signExpires":([^,]%d+)')
+	local sign = answer:match('sign":"([^"]+)')
+	local url_new = string.format(decode64('aHR0cHM6Ly9hcmVzLm50dnBsdXMudHYvdjMvd2ViL3BsYXkvJXM/Y29udGVudFR5cGU9Y2hhbm5lbCZjb250ZW50SWQ9JXMmcXVhbGl0eT1IRCZ1c2VySWQ9JXMmc2Vzc2lvbklkPSVzJnRzPSVzJnNpZ249JXM'), content_id, content_id, user_id, session_id, ts, sign)
+		if not url_new then return end
+	local rc, answer = m_simpleTV.Http.Request(session, {url = url_new, headers = kuka})
 		if rc ~= 200 then return end
 	local adr = answer:match('"videoUrl":%s?"([^"]+)')
 	local rc, answer = m_simpleTV.Http.Request(session, {url = adr})
 	if rc ~= 200 then return end
-		
 	local s = {}
 		for w in answer:gmatch('EXT%-X%-STREAM%-INF(.-).m3u8') do
 				local bw = w:match('BANDWIDTH=([^,]%d+)')
