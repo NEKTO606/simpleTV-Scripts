@@ -1,18 +1,14 @@
--- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (13/3/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (26/6/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: limeHD.lua
--- расширение дополнения httptimeshift: limehd-timeshift_ext.lua
 -- ## Переименовать каналы ##
 local filter = {
 		{'Детско-юношеский телеканал «Карусель»', 'Карусель'},
-		{'Детско-юношеский телеканал «Карусель» +2', 'Карусель +2'},
-		{'Детско-юношеский телеканал «Карусель» +4', 'Карусель +4'},
-		{'Детско-юношеский телеканал «Карусель» +6', 'Карусель +6'},
 		{'Общественное телевидение Приморья (Владивосток)', 'ОТВ (Приморье)'},
-		{'Центральное телевидение', 'ЦТВ'},
 		{'Петербург - 5 канал', '5 канал'},
 		{'ТВ ЦЕНТР - Москва', 'ТВЦ'},
+		{'Телекомпания НТВ', 'НТВ'},
 	}
 	local host = 'https://limehd.tv/'
 	local my_src_name = 'Lime HD'
@@ -35,39 +31,32 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
-	
 	local function LoadFromSite()
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0')
+	local session = m_simpleTV.Http.New('LimeHDTV/5.0.0 (com.infolink.LimeHDTV; build:1; iOS 16.2.0) Alamofire/5.0.0')
 		if not session then return end
-	m_simpleTV.Http.SetTimeout(session, 8000)
-	headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbGltZWhkLnBocA'), headers = headers})
-			if rc ~= 200 or not answer then return end
-		answer = answer:gsub('\\', '\\\\')
-		answer = answer:gsub('\\"', '\\\\"')
-		answer = answer:gsub('\\/', '/')
-		answer = answer:gsub('%[%]', '""')
-		require 'json'
-		local err, tab = pcall(json.decode, answer)
-			if not tab then return end
-		local t = {}
-			for i, v in pairs(tab) do
-				if v[1] and v[3] then
-					t[#t + 1] = {}
-					local name = v[3]:gsub('Телекомпания ', '')
-					name = name:gsub('Общественное телевидение России ', 'ОТР')
-					t[#t].name = unescape3(name)
-					t[#t].address = host .. v[1]
-					if v[4] and v[4] ~= '' then
-						t[#t].logo = string.format('https://assets-iptv2022.cdnvideo.ru/static/channel/%s/logo_256_%s.png', v[2], v[4])
-					else 
-						t[#t].logo = ''
-					end
-					if v[5] > 0 then
-						t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s"', v[5])
-					end
+	m_simpleTV.Http.SetTimeout(session, 12000)
+	local header = decode64('WC1MSEQtQWdlbnQ6IHsidmVyc2lvbl9uYW1lIjoiNS4wLjAiLCJ2ZXJzaW9uX2NvZGUiOiI1MDAwMCIsInBsYXRmb3JtIjoiaW9zIiwibmFtZSI6ImlQaG9uZSIsImRldmljZV9pZCI6IjE0MzJGNzhFLUY4NzctNEY3OS1BRUE4LUQzRUJBRDBBQTBCMyIsImFwcCI6ImNvbS5pbmZvbGluay5MaW1lSERUViJ9')
+	local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9wbC5pcHR2MjAyMS5jb20vYXBpL3YxL3BsYXlsaXN0'), headers = header})
+		if rc ~= 200 or not answer then return end
+	answer = answer:gsub('\\', '\\\\')
+	answer = answer:gsub('\\"', '\\\\"')
+	answer = answer:gsub('\\/', '/')
+	answer = answer:gsub('%[%]', '""')
+	require 'json'
+	local err, tab = pcall(json.decode, answer)
+		if not tab then return end
+	local t = {}
+		for i = 1, #tab.channels do
+			if tab.channels[i].url and tab.channels[i].url ~= '' then
+				t[#t + 1] = {}
+				t[#t].name = tab.channels[i].name_ru
+				t[#t].address = host .. tab.channels[i].id
+				t[#t].logo = tab.channels[i].image
+				if tab.channels[i].with_archive and tab.channels[i].url_archive ~= '' and tab.channels[i].day_archive > 0 then
+					t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s" catchup-source="%sindex-${start}-${offset}.m3u8"', tab.channels[i].day_archive, tab.channels[i].url_archive)
 				end
 			end
+		end
 	 return t
 	end
 	function GetList(UpdateID, m3u_file)
