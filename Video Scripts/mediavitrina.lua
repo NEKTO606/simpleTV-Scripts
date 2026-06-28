@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (26/6/26)
+-- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (28/6/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: mediavitrina_pls.lua
@@ -29,7 +29,8 @@
 		local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr:gsub('$OPT:.+', '')})
 			if rc ~= 200 then return end
 		answer = answer:gsub('[%c]', ''):gsub('%s+', '')
-		answer = answer:match("streams_api_v2_url:%s?%'([^%']+)")
+		answer = answer:match("(https://media.mediavitrina.ru/balancer/[^%']+)")
+			if not answer then return end
 		adr = answer:match('^([^?]+)')
 		egress = answer:match('([^=]%d+)&$')
 		adr = string.format('%s?player_referer_hostname=%s&egress_version_id=%s', adr, referer, egress)
