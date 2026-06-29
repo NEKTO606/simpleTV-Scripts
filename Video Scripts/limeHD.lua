@@ -1,7 +1,8 @@
--- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (26/6/26)
+-- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (29/6/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: lime_hd_pls.lua
+-- расширение дополнения httptimeshift: limehd-timeshift_ext.lua
 -- ## открывает подобные ссылки ##
 -- https://limehd.tv/129
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
@@ -10,6 +11,12 @@
 		m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
+	if not m_simpleTV.User then
+		m_simpleTV.User = {}
+	end
+	if not m_simpleTV.User.limehd then
+		m_simpleTV.User.limehd = {}
+	end
 	inAdr = inAdr:gsub('$OPT:.+', '')
 	local id = tonumber(inAdr:match('([^/]%d*)$'))
 	m_simpleTV.Control.ChangeAddress = 'Yes'
@@ -31,6 +38,7 @@
 	for i = 1, #tab.channels do
 		if tab.channels[i].id == id then
 			retAdr = tab.channels[i].url
+			m_simpleTV.User.limehd.url_archive = tab.channels[i].url_archive
 		 break
 		end
 	end
