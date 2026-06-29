@@ -1,5 +1,5 @@
--- расширение дополнения httptimeshift limeHD (1/12/23)
--- Copyright © 2017-2023 Nexterr | https://github.com/Nexterr-origin/simpleTV-Addons
+-- расширение дополнения httptimeshift limeHD (29/6/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 	function httpTimeshift_limehd(eventType, eventParams)
 		if eventType == 'StartProcessing' then
 			if not eventParams.params
@@ -21,7 +21,7 @@
 				if eventParams.params.offset > 0 then
 					local len = math.floor(eventParams.params.offset/1000)
 					local starttime = os.time() - len
-					eventParams.params.address = m_simpleTV.User.limehd.url_archive .. '/index-' .. starttime .. '-' .. len .. '.m3u8$OPT:http-referrer=https://limehd.tv/'
+					eventParams.params.address = m_simpleTV.User.limehd.url_archive .. 'index-' .. starttime .. '-' .. len .. '.m3u8'
 				end
 			 return true
 			end
