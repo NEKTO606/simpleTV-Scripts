@@ -1,7 +1,8 @@
--- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (26/6/26)
+-- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (29/6/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: limeHD.lua
+-- расширение дополнения httptimeshift: limehd-timeshift_ext.lua
 -- ## Переименовать каналы ##
 local filter = {
 		{'Детско-юношеский телеканал «Карусель»', 'Карусель'},
@@ -53,7 +54,7 @@ local filter = {
 				t[#t].address = host .. tab.channels[i].id
 				t[#t].logo = tab.channels[i].image
 				if tab.channels[i].with_archive and tab.channels[i].url_archive ~= '' and tab.channels[i].day_archive > 0 then
-					t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s" catchup-source="%sindex-${start}-${offset}.m3u8"', tab.channels[i].day_archive, tab.channels[i].url_archive)
+					t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s"', tab.channels[i].day_archive)
 				end
 			end
 		end
