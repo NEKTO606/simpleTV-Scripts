@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (26/6/26)
+-- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (1/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: ntvplus.lua, mediavitrina.lua
@@ -52,8 +52,15 @@ local filter = {
 			local headers = loadstring(code)()
 			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbnR2LnBocA'), headers = headers})
 				if rc ~= 200 or not answer then return end
-			m_simpleTV.Config.SetValue('ntv_token', answer)
-			kuka = decode64(answer)
+			if answer == 'error' then
+				local t = {text = 'Нет рабочего токена', showTime = 1000 * 3, color = ARGB(255,255, 0, 0), id = 'channelName'}
+				m_simpleTV.OSD.ShowMessageT(t)
+			 return
+			end
+			if answer ~= 'error' then
+				m_simpleTV.Config.SetValue('ntv_token', answer)
+				kuka = decode64(answer)
+			end
 		end
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9udHZwbHVzLnR2L3Jlc3Qvd2ViL2NoYW5uZWxz'), headers = kuka})
 		answer = answer:gsub('\\', '\\\\')
@@ -63,7 +70,6 @@ local filter = {
 		require 'json'
 		local err, tab = pcall(json.decode, answer)
 			if not tab then return end
-		local t = {}
 		return tab.channels
 	end	
 	
@@ -71,16 +77,21 @@ local filter = {
 		local tab = GetJson()
 			if not tab then return end
 		local t = {}
+		local count = 0
 			for _, v in pairs(tab) do
 				if v.access and v.type ~= 'RADIO' then
+					count = count + 1
 					t[#t + 1] = {}
 					t[#t].name = v.name
 					t[#t].address = host .. v.url
 					t[#t].logo = v.logo.light.cropped
 				end
 			end
-			
-		 return t
+		if count == 22 then
+			m_simpleTV.Config.Remove('ntv_token')
+			GetJson()
+		end
+	 return t
 	end
 	function GetList(UpdateID, m3u_file)
 			if not UpdateID then return end
