@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (26/6/26)
+-- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (1/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: ntvplus_pls.lua
@@ -27,6 +27,11 @@
 		local headers = loadstring(code)()
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbnR2LnBocA'), headers = headers})
 			if rc ~= 200 or not answer then return end
+		if answer == 'error' then
+			local t = {text = 'Нет рабочего токена', showTime = 1000 * 3, color = ARGB(255,255, 0, 0), id = 'channelName'}
+			m_simpleTV.OSD.ShowMessageT(t)
+		 return
+		end
 		m_simpleTV.Config.SetValue('ntv_token', answer)
 		kuka = decode64(answer)
 	end
@@ -54,16 +59,16 @@
 	if rc ~= 200 then return end
 	local s = {}
 		for w in answer:gmatch('EXT%-X%-STREAM%-INF(.-).m3u8') do
-				local bw = w:match('BANDWIDTH=([^,]%d+)')
-				local res = w:match('([^-]%d+)p$')
-				bw = tonumber(bw)
-				if bw and res and bw > 1000 then
-					bw = math.ceil(bw / 100000) * 100
-					s[#s + 1] = {}
-					s[#s].Id = bw
-					s[#s].Name = res .. 'p (' .. bw .. ' кбит/с)'
-					s[#s].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', adr, bw)
-				end
+			local bw = w:match('BANDWIDTH=([^,]%d+)')
+			local res = w:match('([^-]%d+)p$')
+			bw = tonumber(bw)
+			if bw and res and bw > 1000 then
+				bw = math.ceil(bw / 100000) * 100
+				s[#s + 1] = {}
+				s[#s].Id = bw
+				s[#s].Name = res .. 'p (' .. bw .. ' кбит/с)'
+				s[#s].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', adr, bw)
+			end
 		end
 		if #s == 0 then
 			m_simpleTV.Control.CurrentAddress = adr
