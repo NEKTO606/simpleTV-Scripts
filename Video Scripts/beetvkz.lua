@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (1/7/26)
+-- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (2/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: beetvkz_pls.lua
@@ -12,15 +12,15 @@
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
 	local id = inAdr:match('([^/]%d+)$')
-	inAdr = string.format(decode64('aHR0cHM6Ly9zcG92dC5ydS9icGstdHYvJXMvdHZlL2luZGV4Lm0zdTg'), id)
+	inAdr = string.format(decode64('aHR0cHM6Ly9zbW90cmltLm9yZy8lcy5tM3U4'), id)
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 12000)
-	local extOpt = '$OPT:http-referrer=https://spovt.ru/'
-	local headers = 'Referer: https://spovt.ru/'
-	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr, headers = headers})
+	--local extOpt = '$OPT:http-referrer=https://spovt.ru/'
+	--local headers = 'Referer: https://spovt.ru/'
+	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 		if rc ~= 200 then return end
 	m_simpleTV.Http.Close(session)
 	local gm, rs, bn
@@ -44,11 +44,11 @@
 				t[#t + 1] = {}
 				t[#t].Id = bw
 				t[#t].Name = res .. 'p (' .. bw .. ' кбит/с)'
-				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s%s', inAdr, bw, extOpt)
+				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', inAdr, bw)
 			end
 		end
 		if #t == 0 then
-			m_simpleTV.Control.CurrentAddress = inAdr .. extOpt
+			m_simpleTV.Control.CurrentAddress = inAdr
 		 return
 		end
 	table.sort(t, function(a, b) return a.Id < b.Id end)
@@ -60,7 +60,7 @@
 	t[#t + 1] = {}
 	t[#t].Id = 50000
 	t[#t].Name = '▫ адаптивное'
-	t[#t].Address = inAdr .. extOpt
+	t[#t].Address = inAdr
 	local index = #t
 		for i = 1, #t do
 			if t[i].Id >= lastQuality then
