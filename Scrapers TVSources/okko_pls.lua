@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "ОККО" https://okko.tv (27/1/26)
+-- скрапер TVS для загрузки плейлиста "ОККО" https://okko.tv (3/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: okko.lua
@@ -25,20 +25,20 @@ local filter = {
 	 return t
 	end
 	function GetSettings()
-	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_' .. my_src_name .. '.m3u', logo = '..\\Channel\\logo\\Icons\\okko.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
+	 return {name = my_src_name, sortname = '', scraper = '', m3u = 'out_okko.m3u', logo = '..\\Channel\\logo\\Icons\\okko.png', TypeSource = 1, TypeCoding = 1, DeleteM3U = 1, RefreshButton = 1, show_progress = 0, AutoBuild = 0, AutoBuildDay = {0, 0, 0, 0, 0, 0, 0}, LastStart = 0, TVS = {add = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, LogoTVG = 0}, STV = {add = 1, ExtFilter = 1, FilterCH = 1, FilterGR = 1, GetGroup = 1, HDGroup = 1, AutoSearch = 1, AutoNumber = 1, NumberM3U = 0, GetSettings = 1, NotDeleteCH = 0, TypeSkip = 1, TypeFind = 1, TypeMedia = 0, RemoveDupCH = 1}}
 	end
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
 	
-	local channels = decode64('aHR0cHM6Ly9jdHgucGxheWZhbWlseS5ydS9zY3JlZW5hcGkvdjEvZXBnY29sbGVjdGlvbi93ZWIvMT9saW1pdD0yNTAmZWxlbWVudEFsaWFzPXR2Y2hhbm5lbHNfYWxsJmVsZW1lbnRJZD10dmNoYW5uZWxzX2FsbCZwcm9ncmFtSW5UaW1lbGluZT10cnVlJmN1cnJlbnRQbHVzSG91cj02JnNpZD0')
+	local channels = decode64('aHR0cHM6Ly9hcGkub2trby50di9zY3JlZW5hcGkvdjIvZXBnY29sbGVjdGlvbi93ZWIvMT9tYXhSZXN1bHRzPTI1MCZlbGVtZW50QWxpYXM9dHZjaGFubmVsc19hbGwmZWxlbWVudElkPXR2Y2hhbm5lbHNfYWxsJnByb2dyYW1JblRpbWVsaW5lPWZhbHNlJmN1cnJlbnRQbHVzSG91cj02JnNpZD0')
 	
 	local function showMsg(str, color)
 		local t = {text = str, showTime = 1000 * 2, color = color, id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
