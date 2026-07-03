@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "ОККО" https://okko.tv (2/6/26)
+-- видеоскрипт для плейлиста "ОККО" https://okko.tv (3/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: 'okko_pls.lua
@@ -14,7 +14,7 @@
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
 	local id = inAdr:match('([^/]+)$')
-	local url = decode64('aHR0cHM6Ly9jdHgucGxheWZhbWlseS5ydS9zY3JlZW5hcGkvdjIvcHJlcGFyZXBsYXliYWNrL3dlYi8xP2VsZW1lbnRzPQ') .. url_encode('[{"id":"' .. id .. '"}]') .. '&sid='
+	local url = decode64('aHR0cHM6Ly9hcGkub2trby50di9zY3JlZW5hcGkvdjIvcHJlcGFyZXBsYXliYWNrL3dlYi8xP2VsZW1lbnRzPQ') .. url_encode('[{"id":"' .. id .. '"}]') .. '&sid='
 	
 	local function showMsg(str, color)
 		local t = {text = str, showTime = 1000 * 3, color = color, id = 'channelName'}
@@ -24,7 +24,7 @@
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = ''
 
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
