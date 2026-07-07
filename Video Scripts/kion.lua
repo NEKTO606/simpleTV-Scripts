@@ -1,10 +1,10 @@
--- скрапер TVS для загрузки плейлиста "KION" https://kion.ru (21/4/26)
+-- скрапер TVS для загрузки плейлиста "KION" https://kion.ru (7/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: kion_pls.lua
 -- расширение дополнения httptimeshift: kion-timeshift_ext.lua
 -- ## открывает ссылки ##
--- https://kion.ru/PU1UWn3lrVFkw2SURNd12lHTmtG1VE8zSV2dZbVZX2TzRNRE80xSTJN6a0YyWX4hBek4=9
+-- https://kion.ru/ru-tv/604
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://kion%.ru') then return end
 	if m_simpleTV.Control.MainMode == 0 then
@@ -12,28 +12,24 @@
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
-	inAdr = inAdr:match('([^/]+)$')
-	local f = inAdr:sub(1, 1)
-	local l = inAdr:sub(-1)
-	local x = tonumber(f .. l)
-	inAdr = inAdr:sub(2):sub(1, -2)
-	local d = ''
-	local s = ''
-	local y = 1
-	for i = 1, #inAdr do
-		if i % 2 == 0 and y <= x then
-			s = s .. inAdr:sub(i, i)
-			y = y + 1
-		else
-			d = d .. inAdr:sub(i, i)
-		end
-	end
+	local id = inAdr:match('([^/]%d*)$')
+
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	local inAdr = string.format(decode64('aHR0cHM6Ly9odHYtcnJzLm10cy5ydS9tdHMvb25saW5lL3BsdHYvJXMvJXMubXBkJE9QVDphZGFwdGl2ZS11c2UtYXZkZW11eCRPUFQ6YXZkZW11eC1vcHRpb25zPXtkZWNyeXB0aW9uX2tleT0lc30'), s, s, d)
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0')
+
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
+	local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+	local headers = loadstring(code)()
+	local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gva2lvbi5waHA/Yz0') .. id, headers = headers})
+		if rc ~= 200 or answer == 'null' then return end
+	require 'json'
+	local err, tab = pcall(json.decode, answer)
+		if not tab then return end
+		for _, v in pairs(tab) do
+			inAdr = string.format(decode64('aHR0cHM6Ly9odHYtcnJzLm10cy5ydS9tdHMvb25saW5lL3BsdHYvJXMvJXMubXBkJE9QVDphZGFwdGl2ZS11c2UtYXZkZW11eCRPUFQ6YXZkZW11eC1vcHRpb25zPXtkZWNyeXB0aW9uX2tleT0lc30'), v[1], v[1], v[2])
+		end
 	url = inAdr:gsub('$OPT:.+', '')
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url})
 		if rc ~= 200 then return end
