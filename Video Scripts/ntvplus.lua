@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (1/7/26)
+-- скрапер TVS для загрузки плейлиста "НТВ+" https://ntvplus.tv (10/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: ntvplus_pls.lua
@@ -12,7 +12,8 @@
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT.+', '')
-	local id = inAdr:match('([^-]%d+)$')
+	local id = inAdr:match('([^-]%d*)$')
+		if not id then return end
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
