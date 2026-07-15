@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "ОККО" https://okko.tv (3/7/26)
+-- видеоскрипт для плейлиста "ОККО" https://okko.tv (15/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: 'okko_pls.lua
@@ -55,7 +55,14 @@
 	local function CheckToken(token)
 		local stat
 		local tab = GetJson(token)
-			if not tab then return end
+			if not tab or not 
+				tab.elements or not 
+				tab.elements.items or not
+				tab.elements.items[1].assets or not
+				tab.elements.items[1].assets.items
+			then 
+				showMsg('Ошибка: ' .. tab.status, ARGB(255,255, 0, 0))
+			return end
 		if tab.authorized and tab.elements.items[1].assets.items then
 			stat = 200
 		else 
