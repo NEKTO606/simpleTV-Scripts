@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (2/7/26)
+-- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (27/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: beetvkz_pls.lua
@@ -12,7 +12,7 @@
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
 	local id = inAdr:match('([^/]%d+)$')
-	inAdr = string.format(decode64('aHR0cHM6Ly9zbW90cmltLm9yZy8lcy5tM3U4'), id)
+	inAdr = string.format(decode64('aHR0cHM6Ly90dnNldC5vcmcvY2gvJXMubTN1OA'), id)
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
