@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "ОККО" https://okko.tv (15/7/26)
+-- видеоскрипт для плейлиста "ОККО" https://okko.tv (30/7/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: 'okko_pls.lua
@@ -137,7 +137,7 @@
 	   end
 	end
 	
-	if #x > 0 and GetKey(tab.elements.items[1].id) then
+	if #x > 0 and GetKey(tab.elements.items[1].id) and tab.elements.items[1].assets.items[i].media.quality == 'Q_FULL_HD' then
 		for i = 1, #x do
 			x[i].Address = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', x[i].Address, decode64(GetKey(tab.elements.items[1].id)))
 		end
