@@ -1,10 +1,21 @@
--- скрапер TVS для загрузки плейлиста "Смотрёшка" https://smotreshka.tv (25/2/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "Смотрёшка" https://smotreshka.tv (4/8/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: smotreshka.lua
 -- ## Переименовать каналы ##
 local filter = {
 		{'РБК ТВ HD', 'РБК HD'},
+		{'Петербург - 5 канал', '5 канал'},
+		{'Телекомпания НТВ', 'НТВ'},
+		{'Телеканал Театр HD', 'Театр HD'},
+		{'ТВ ЦЕНТР - Москва', 'ТВЦ'},
+		{'ЖАРА ТВ HD', 'ЖАРА HD'},
+		{'ТВ 3', 'ТВ3'},
+		{'Детско-юношеский телеканал "Карусель"', 'Карусель'},
+		{'Домашний - ТВК6', 'ТВК6'},
+		{'ТВ-ИН Магнитогорск HD', 'ТВ-ИН (Магнитогорск) HD'},
+		{'Самарское губернское телевидение (ГУБЕРНИЯ)', 'Самара 450'},
+		{'Телеканал АРТ', 'АРТ'},
 	}
 	local host = 'https://fe.smotreshka.tv/'
 	local my_src_name = 'Смотрёшка'
@@ -125,6 +136,7 @@ local filter = {
 				m[#m + 1] = {}
 				m[#m].media = media[i].channelId
 				m[#m].id = media[i].id
+				m[#m].liveOnly = media[i].liveOnly
 			end
 		
 		local f = {}		
@@ -134,6 +146,7 @@ local filter = {
 					f[#f + 1] = {}
 					f[#f].id = y.id
 					f[#f].media = v.id
+					f[#f].liveOnly = v.liveOnly
 				end
 			end
 		end
@@ -147,10 +160,12 @@ local filter = {
 						local title = channels[i].title
 						if id and title then
 							t[#t + 1] = {}
-							t[#t].name = unescape3(title)
+							t[#t].name = unescape3(title):gsub('\\', '')
 							t[#t].address = host .. id
 							t[#t].logo = channels[i].logoUrl or ''
-							t[#t].RawM3UString = string.format('catchup="append" catchup-days="%s" catchup-source="&delay=${offset}"', (math.ceil(channels[i].dvrDepthLimitHours/24) or 0))
+							if not v.liveOnly then
+								t[#t].RawM3UString = string.format('catchup="append" catchup-days="%s" catchup-source="&delay=${offset}"', (math.ceil(channels[i].dvrDepthLimitHours/24) or 0))
+							end
 						end
 					end
 				end
