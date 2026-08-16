@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (29/6/26)
+-- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (16/8/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: limeHD.lua
@@ -33,10 +33,56 @@ local filter = {
 	 return 2, 'UTF-8'
 	end
 	local function LoadFromSite()
-	local session = m_simpleTV.Http.New('LimeHDTV/5.0.0 (com.infolink.LimeHDTV; build:1; iOS 16.2.0) Alamofire/5.0.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 12000)
-	local header = decode64('WC1MSEQtQWdlbnQ6IHsidmVyc2lvbl9uYW1lIjoiNS4wLjAiLCJ2ZXJzaW9uX2NvZGUiOiI1MDAwMCIsInBsYXRmb3JtIjoiaW9zIiwibmFtZSI6ImlQaG9uZSIsImRldmljZV9pZCI6IjE0MzJGNzhFLUY4NzctNEY3OS1BRUE4LUQzRUJBRDBBQTBCMyIsImFwcCI6ImNvbS5pbmZvbGluay5MaW1lSERUViJ9')
+	
+	local function CheckToken(token)
+		if token then
+			local header = string.format('x-lhd-agent: {"platform":"web","app":"limehd.tv","device_id":"194973.63324970874-1785414641196"}\nx-token: %s', token)
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9wbC5pcHR2MjAyMS5jb20vYXBpL3Y0L2NoYW5uZWwva2lub2NvbWVkaWE/ZXBnPTA'),  headers = header})
+				if rc ~= 200 or not answer then return end
+			answer = answer:gsub('\\', '\\\\')
+			answer = answer:gsub('\\"', '\\\\"')
+			answer = answer:gsub('\\/', '/')
+			answer = answer:gsub('%[%]', '""')
+			require 'json'
+			local err, tab = pcall(json.decode, answer)
+				if not tab then return end
+			if tab.url and tab.url ~= '' then
+				return 200
+			else
+				return 'error'
+			end
+		end
+	end
+	
+	local function GetToken()
+		local token = m_simpleTV.Config.GetValue('lime_token')
+		if not token or CheckToken(token) ~= 200 then
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = loadstring(code)()
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvbGltZS5waHA'), headers = headers})
+				if rc ~= 200 or not answer then return end
+			if CheckToken(answer) == 200 then
+				m_simpleTV.Config.SetValue('lime_token', answer)
+				token = answer
+			else
+				token = 'error'
+			end
+		end
+	 return token
+	end
+	
+	local tok = GetToken()
+	local tok_str
+	if tok and tok ~= 'error' then
+		tok_str = '\nx-token: ' .. tok
+	else 
+		tok_str = ''
+	end
+
+	local header = 'x-lhd-agent: {"platform":"web","app":"limehd.tv","device_id":"194973.63324970874-1785414641196"}' .. tok_str
 	local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9wbC5pcHR2MjAyMS5jb20vYXBpL3YxL3BsYXlsaXN0'), headers = header})
 		if rc ~= 200 or not answer then return end
 	answer = answer:gsub('\\', '\\\\')
