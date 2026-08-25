@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Beeline TV" https://beeline.tv (9/4/26)
+-- скрапер TVS для загрузки плейлиста "Beeline TV" https://beeline.tv (25/8/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts/
 -- ## необходим ##
 -- видеоскрипт: beeline-tv.lua
@@ -8,16 +8,22 @@ local filter = {
 		{'ТВ Центр - Москва', 'ТВЦ'},
 		{'TMB RU (Твой Мир Восток)', 'Восток ТВ'},
 		{'Travel and Adventure', 'Travel+Adventure'},
-		{"Детско-юношеский телеканал ''Карусель''", 'Карусель'},
-		{'Общественное телевидение России', 'ОТР'},
+		{'Детско-юношеский телеканал "Карусель"', 'Карусель'},
+		{'Телеканал "Общественное телевидение России"', 'ОТР'},
 		{'Телеканал 360*', 'Телеканал 360°'},
 		{'Телекомпания НТВ', 'НТВ'},
 		{'Мосфильм.Золотая коллекция', 'Мосфильм. Золотая коллекция'},
 		{'Татарстан-Новый век', 'ТНВ'},
 		{'КИНОСЕРИЯ', 'Киносерия'},
 		{'КИНОУЖАС', 'Киноужас'},
+		{'Петербург - 5 канал', '5 канал'},
+		{'Петербург - 5 канал HD', '5 канал HD'},
+		{'Настоящее страшное ТВ', 'НСТ'},
+		{'Travel+ Adventure', 'Travel+Adventure'},
+		{'CuriosityStream', 'Curiosity Stream'},
 	}
 	local my_src_name = 'Beeline TV'
+	local host = 'https://beeline.tv/'
 	module('beeline-tv_pls', package.seeall)
 	local function ProcessFilterTableLocal(t)
 		if not type(t) == 'table' then return end
@@ -37,13 +43,18 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
-	local function LoadFromSite()
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:154.0) Gecko/20100101 Firefox/154.0')
 		if not session then return end
-		m_simpleTV.Http.SetTimeout(session, 8000)
-		local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
-		local headers = loadstring(code)()
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVlbGluZS5waHA'), headers = headers})
+	m_simpleTV.Http.SetTimeout(session, 12000)
+	local sum = {}
+	local function LoadFromSite(x)
+		if x == nil then
+			offset = 0
+			x = 0
+		else
+			offset = 30 * x
+		end
+		local rc, answer = m_simpleTV.Http.Request(session, {url = string.format(decode64('aHR0cHM6Ly9hcGkuYmVlcG9wY29ybi5ydS92NS9jaGFubmVscy5qc29uP2NsaWVudF9pZD0zZTI4Njg1Yy1mY2UwLTQ5OTQtOWQzYS0xZGFkMjc3NmUxNmEmY2xpZW50X3ZlcnNpb249My45LjIuMTEyNiZsb2NhbGU9cnUtUlUmdGltZXpvbmU9MTA4MDAmcGFnZVtsaW1pdF09MzAmcGFnZVtvZmZzZXRdPSVzJmNhcmRfY29uZmlnX2NvbnRleHRbc2NyZWVuXT1kZWZhdWx0'), offset)})
 			if rc ~= 200 or not answer then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
@@ -51,20 +62,38 @@ local filter = {
 		answer = answer:gsub('%[%]', '""')
 		require 'json'
 		local err, tab = pcall(json.decode, answer)
-			if not tab then return end
+			if not tab or not tab.data then return end
 		local t = {}
-			for i, v in pairs(tab) do
-				if v[1] and v[2] and v[6] then
-					t[#t + 1] = {}
-					t[#t].name = v[1]
-					t[#t].address = v[2] .. '/' .. v[6]
-					t[#t].logo = string.format('http://static.beeline.tv/Service.svc/GetImage/p/478/entry_id/%s/version/%s', v[3], v[4])
-					if tonumber(v[5]) > 0 then
-						t[#t].RawM3UString = 'catchup="append" catchup-days="3" catchup-record-source="?starttime=${start}&stoptime=${end}"'
+			for i = 1, #tab.data do
+				t[#t + 1] = {}
+				t[#t].name = tab.data[i].name:gsub('\\', '')
+				t[#t].address = host .. tab.data[i].slug .. '/' .. tab.data[i].live_stream.streaming_uid
+				for y = 1, #tab.data[i].images do
+					if tab.data[i].images[y].type == 'logo' then
+						t[#t].logo = tab.data[i].images[y].url_template:gsub('{width}x{height}{crop}', '90x90c')
+					 break
 					end
 				end
+				if tab.data[i].catchup_availability.available then
+					local days = tab.data[i].catchup_availability.period.value
+					t[#t].RawM3UString = string.format('catchup="append" catchup-days="%s" catchup-record-source="?starttime=${start}&stoptime=${end}"', days)
+				end
 			end
-	 return t
+		x = x + 1
+		local count = math.floor(tab.meta.pagination.total / 30)
+		if x <= count then LoadFromSite(x) end
+		for i=1,#t do
+			sum[#sum+1] = t[i]
+		end
+		local hash = {}
+		local res = {}
+		for _,v in ipairs(sum) do
+		   if not hash[v.name] then
+			   res[#res+1] = v
+			   hash[v.name] = true
+		   end
+		end
+	 return res
 	end
 	function GetList(UpdateID, m3u_file)
 			if not UpdateID then return end
