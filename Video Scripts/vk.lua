@@ -1,22 +1,19 @@
--- видеоскрипт для сайта http://vk.com (23/11/24)
--- Copyright © 2017-2024 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- видеоскрипт для сайта http://vk.com (30/8/26)
+-- Copyright © 2017-2026 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: YT.lua, vimeo.lua ...
 -- ## открывает подобные ссылки ##
--- https://vk.com/video_ext.php?oid=-22186156&id=456239617&hd=2&autoplay=1
--- https://vk.com/video-33598391_456239036
+-- https://vk.ru/video_ext.php?oid=-22186156&id=456239617&hd=2&autoplay=1
+-- https://vk.ru/video-33598391_456239036
 -- http://vkontakte.ru/video-208344_73667683
--- https://vk.com/feed?z=video-101982925_456239539%2F1900258e458f45eccc%2Fpl_post_-101982925_3149238
--- https://vk.com/video_ext.php?oid=-24136539&id=456239830&hash=34e326ffb9cbb93e
--- https://vk.com/video-208344_456241847
--- https://vk.com/video-208344_456241842
--- https://vk.com/video/playlist/-121487680_216
--- https://vk.com/video-40535376_456239512
--- https://vk.com/video/@public216539463?z=video-216539463_456239289%2Fclub216539463%2Fpl_-216539463_-2
+-- https://vk.ru/feed?z=video-101982925_456239539%2F1900258e458f45eccc%2Fpl_post_-101982925_3149238
+-- https://vk.ru/video/@public216539463?z=video-216539463_456239289%2Fclub216539463%2Fpl_-216539463_-2
+-- https://vk.ru/video_ext.php?oid=-24136539&id=456239830&hash=34e326ffb9cbb93e
+-- https://vk.ru/video/playlist/-121487680_216
 -- https://vkvideo.ru/video-225625235_456246383
 -- https://vksport.vkvideo.ru/video-223277497_456239246
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
-		if not m_simpleTV.Control.CurrentAddress:match('^https?://vk%.com/.+')
+		if not m_simpleTV.Control.CurrentAddress:match('^https?://vk%.ru/.+')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://vkontakte%.ru/.+')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://vkvideo%.ru/video.+')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://vkvideo%.ru/clip.+')
@@ -32,12 +29,12 @@
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:124.0) Gecko/20100101 Firefox/124.0'
+	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:154.0) Gecko/20100101 Firefox/154.0'
 	local session = m_simpleTV.Http.New(userAgent)
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 10000)
 	inAdr = inAdr:gsub('&id=', '_')
-	local vId = inAdr:match('[%a=](%-?%d+_%d+)')
+	local vId = inAdr:match('%a=%a*(%-?%d+_%d+)') or inAdr:match('%a*(%-?%d+_%d+)')
 	local listId = inAdr:match('list=([^&]+)')
 	local playlist_id = inAdr:match('/playlist/(%-?%d+_%d+)')
 		if not vId and not playlist_id then return end
