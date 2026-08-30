@@ -1,7 +1,7 @@
 -- скрапер TVS для загрузки плейлиста "Tvigle" https://www.tvigle.ru (30/8/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
--- видеоскрипт: tvigle.lua
+-- видеоскрипт: tvigle.lua, mediavitrina.lua
 -- ## Переименовать каналы ##
 local filter = {}
 	local host = 'https://tvigle.ru/'
