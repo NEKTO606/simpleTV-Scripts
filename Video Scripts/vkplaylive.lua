@@ -1,5 +1,5 @@
--- видеоскрипт для сайта https://vkvideo.ru (31/3/26)
--- Copyright © 2017-2026 Nexterr,NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- видеоскрипт для сайта https://vkvideo.ru (4/9/26)
+-- Copyright © 2017-2026 Nexterr,NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
 -- https://vkvideo.ru/live-116061363_456244502
@@ -22,13 +22,15 @@
 	
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0')
+
+	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'
+
+	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
 	local retAdr
-	local extOpt = '$OPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0'
+	local extOpt = '$OPT:http-user-agent=' .. user_agent
 	
 	if inAdr:match('tvchannels') or inAdr:match('vkvideo%.ru/live') then
 		local body = 'client_secret=o557NLIkAErNhakXrQ7A&client_id=52461373'
@@ -36,17 +38,12 @@
 			if rc ~= 200 then return end
 		local token = answer:match('"access_token":"([^"]+)')
 			if not token then return end
-		local id = inAdr:match('([^/]+)$')
-		id = id:gsub('live', '')
+		local id = inAdr:match('([^/]+)$'):gsub('live', '')
 		local body = 'videos=' .. id .. '&access_token=' .. token
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = 'https://api.vkvideo.ru/method/video.get?v=5.269&client_id=52461373', body = body})
 			if rc ~= 200 then return end
-		retAdr = answer:match('cmaf":"([^"]+)')
-		if not retAdr then
-			retAdr =  answer:match('hls":"([^"]+)')
-		end
-		if not retAdr then return end
-		retAdr = retAdr:gsub('\\/', '/')
+		retAdr = (answer:match('cmaf":"([^"]+)') or answer:match('hls":"([^"]+)')):gsub('\\u0026', '&'):gsub('\\/', '/')
+			if not retAdr then return end
 		
 	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live')  then
 		inAdr =inAdr:gsub('%?.+', '')
