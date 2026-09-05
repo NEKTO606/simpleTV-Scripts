@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://ok.ru (4/9/26)
+-- видеоскрипт для сайта https://ok.ru (5/9/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- http://ok.ru/videoembed/2636779838
