@@ -1,11 +1,12 @@
--- видеоскрипт для сайта https://vkvideo.ru (4/9/26)
--- Copyright © 2017-2026 Nexterr,NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
+-- видеоскрипт для сайта https://vkvideo.ru (5/9/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
 -- https://vkvideo.ru/live-116061363_456244502
 -- https://live.vkvideo.ru/jove
 -- https://live.vkvideo.ru/app/embed/sky_line
 -- https://live.vkvideo.ru/app/embed/varball/stream/setanta2?tab=slots
+-- https://live.vkvideo.ru/channel30025007/stream/sl_229262
 -- https://vkplay.live/c1ymba
 
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
@@ -22,15 +23,19 @@
 	
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-
+	
 	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'
-
+	
 	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
 	local retAdr
 	local extOpt = '$OPT:http-user-agent=' .. user_agent
+	
+	require 'json'
+	local addTitle = 'vkvideo'
+	local logo, subtitle
 	
 	if inAdr:match('tvchannels') or inAdr:match('vkvideo%.ru/live') then
 		local body = 'client_secret=o557NLIkAErNhakXrQ7A&client_id=52461373'
@@ -40,25 +45,53 @@
 			if not token then return end
 		local id = inAdr:match('([^/]+)$'):gsub('live', '')
 		local body = 'videos=' .. id .. '&access_token=' .. token
-		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = 'https://api.vkvideo.ru/method/video.get?v=5.269&client_id=52461373', body = body})
-			if rc ~= 200 then return end
+		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = 'https://api.vkvideo.ru/method/video.get?v=5.275&client_id=52461373', body = body})
+			if rc ~= 200 or not answer then return end
 		retAdr = (answer:match('cmaf":"([^"]+)') or answer:match('hls":"([^"]+)')):gsub('\\u0026', '&'):gsub('\\/', '/')
 			if not retAdr then return end
+		answer = answer:gsub('%[%]', '{}')
+		local err, tab = pcall(json.decode, answer)
+			if not tab 
+			or not tab.response 
+			or not tab.response.items [1]
+			then return end
 		
+		if tab.response.items[1].subtitles[1].url and tab.response.items[1].subtitles[1].url ~= '' then
+			subtitle = tab.response.items[1].subtitles[1].url
+			subtitle = '$OPT:sub-track-id=0$OPT:input-slave=' .. subtitle:gsub('u0026', '&')
+		end
+		
+		if not inAdr:match('tvchannels') then
+			local title = tab.response.items[1].title
+			if not title then
+				title = addTitle
+			else
+				if m_simpleTV.Control.MainMode == 0 then
+					m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
+					if tab.response.items[1].image[2].url and tab.response.items[1].image[2].url ~= '' then
+						logo = tab.response.items[1].image[2].url:gsub('u0026', '&')
+					end
+					m_simpleTV.Control.ChangeChannelLogo(logo, m_simpleTV.Control.ChannelID, 'CHANGE_IF_NOT_EQUAL')
+				end
+				title = addTitle .. ' - ' .. title
+			end
+			m_simpleTV.Control.CurrentTitle_UTF8 = title
+		end
+
 	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live')  then
 		inAdr =inAdr:gsub('%?.+', '')
 		local user, stream, url
-		if inAdr:match('live%.vkvideo%.ru/app/embed/.-/stream/.-$') then
-			user, stream = inAdr:match('^https://live%.vkvideo%.ru/app/embed/(.-)/stream/(.-)$')
+		if inAdr:match('/app/embed/') or inAdr:match('/stream/') then
+			user, stream = inAdr:match('([^/]+)/stream/(.-)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/%s?', user, stream)
 		else
 			user = inAdr:match('([^/]+)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/default?', user)
 		end
 		local rc, answer = m_simpleTV.Http.Request(session, {url = url})
+		
 			if rc ~= 200 then return end
 		answer = answer:gsub('%[%]', '{}')
-		require 'json'
 		local err, tab = pcall(json.decode, answer)
 			if not tab 
 			or not tab.data 
@@ -66,16 +99,16 @@
 			or not tab.data.stream.data
 			or not tab.data.stream.data[1]
 			then return end
-		local addTitle = 'vkvideo'
 		local title = tab.data.stream.user.displayName .. ' / ' .. tab.data.stream.title
 		if not title then
 			title = addTitle
 		else
 			if m_simpleTV.Control.MainMode == 0 then
 				m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
-				if tab.data.stream.user.avatarUrl and tab.data.stream.user.avatarUrl ~= ''
-				then
+				if tab.data.stream.user.avatarUrl and tab.data.stream.user.avatarUrl ~= '' then
 					logo = tab.data.stream.user.avatarUrl
+				elseif tab.data.stream.user.avatarUrl == '' and tab.data.stream.id ~= '' then
+					logo = string.format('https://images.live.vkvideo.ru/public_video_stream/stream/%s/preview?croped=1&mh=73&mw=130', tab.data.stream.id)
 				end
 				m_simpleTV.Control.ChangeChannelLogo(logo, m_simpleTV.Control.ChannelID, 'CHANGE_IF_NOT_EQUAL')
 			end
@@ -86,18 +119,11 @@
 		for i = 1, #tab.data.stream.data[1].playerUrls do
 			local typeUrl = tab.data.stream.data[1].playerUrls[i].type
 			local adr = tab.data.stream.data[1].playerUrls[i].url
-			local typeUrl = tab.data.stream.data[1].playerUrls[i].type
-			local adr = tab.data.stream.data[1].playerUrls[i].url
 			if typeUrl == 'live_ondemand_hls' and adr ~= '' then
 				retAdr = adr
 			break
 			end
 		end	
-	end
-	
-	if inAdr:match('vkvideo%.ru%/video') then
-		m_simpleTV.Control.CurrentAddress = retAdr .. extOpt
-	 return
 	end
 	
 	local gm, rs, bn
@@ -129,7 +155,6 @@
 				m_simpleTV.User.vklive.duration = duration
 			end
 		end
-		
 		local t = {}
 		for w in answer:gmatch(gm) do
 			w = w:lower()
@@ -142,18 +167,18 @@
 				if res then
 					t[#t].Name = res .. 'p (' .. bw .. ' кбит/с)'
 					t[#t].Id = tonumber(res)
-					t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-maxheight=%s%s', retAdr, res, extOpt)
+					t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-maxheight=%s%s%s', retAdr, res, subtitle or '', extOpt)
 				else
 					t[#t].Name = bw .. ' кбит/с'
 					t[#t].Id = bw
-					t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s%s', retAdr, bw, extOpt)
+					t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s%s%s', retAdr, bw, subtitle or '', extOpt)
 					
 				end
 			end
 		end
 		
 		if #t == 0 then
-			m_simpleTV.Control.CurrentAddress = retAdr
+			m_simpleTV.Control.CurrentAddress = retAdr .. (subtitle or '') .. extOpt
 		 return
 		end
 
@@ -168,7 +193,7 @@
 			t[#t + 1] = {}
 			t[#t].Id = 50000
 			t[#t].Name = '▫ адаптивное'
-			t[#t].Address = adr
+			t[#t].Address = adr 
 			index = #t
 			for i = 1, #t do
 				if t[i].Id >= lastQuality then
