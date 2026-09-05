@@ -219,7 +219,7 @@
 	end
 	
 	if answer:match('/videoembed/') then
-		m_simpleTV.Control.CurrentAddress = retAdr .. '$OPT:http-user-agent=' .. userAgent
+		m_simpleTV.Control.CurrentAddress = retAdr .. (subtitle or '') .. '$OPT:http-user-agent=' .. userAgent
 	 return
 	end
 	
