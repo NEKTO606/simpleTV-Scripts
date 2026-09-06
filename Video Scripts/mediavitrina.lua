@@ -1,5 +1,5 @@
--- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (28/6/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (6/9/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: mediavitrina_pls.lua
 -- ## открывает подобные ссылки ##
