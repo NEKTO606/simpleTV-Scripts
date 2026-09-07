@@ -1,12 +1,12 @@
--- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (10/4/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "BeeTV KZ" https://beetv.kz (7/9/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: beetvkz.lua
 -- ## Переименовать каналы ##
 local filter = {
-	--{'Неизвестная Россия! HD', 'Неизвестная Россия HD'},
+	{'Curiosity HD', 'Curiosity Stream HD'},
+	{'History 2HD', 'History2 HD'},
 	}
-	local host = 'https://beetv.kz/'
 	local my_src_name = 'BeeTV KZ'
 	module('beetvkz_pls', package.seeall)
 	local function ProcessFilterTableLocal(t)
@@ -27,12 +27,32 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
+	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'
+	local function GetPrx()
+		local prx
+		if m_simpleTV.Config.GetValue('beetv_prx') then
+			prx = m_simpleTV.Config.GetValue('beetv_prx')
+		else
+			local session = m_simpleTV.Http.New(user_agent)
+				if not session then return end
+			m_simpleTV.Http.SetTimeout(session, 8000)
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = loadstring(code)()
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVldHYucGhw'), headers = headers})
+			m_simpleTV.Http.Close(session)
+				if rc ~= 200 or not answer then return end
+			m_simpleTV.Config.SetValue('beetv_prx', answer)
+			prx = answer
+		end
+	 return prx
+	end
 	local function LoadFromSite()
-		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0')
+		local session = m_simpleTV.Http.New(user_agent, decode64(GetPrx()), true)
 			if not session then return end
-		m_simpleTV.Http.SetTimeout(session, 12000)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVldHYucGhw')})
-			if rc ~= 200 then return end
+		m_simpleTV.Http.SetTimeout(session, 20000)
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly9hcGkuYmVldHYua3ovdjUvY2hhbm5lbHMuanNvbj9jbGllbnRfaWQ9M2UyODY4NWMtZmNlMC00OTk0LTlkM2EtMWRhZDI3NzZlMTZhJmNsaWVudF92ZXJzaW9uPTQuNC45LjM2MDE5MzYmbG9jYWxlPXJ1LUtaJnRpbWV6b25lPS0xODAwMCZwYWdlW2xpbWl0XT01MDA')})
+		m_simpleTV.Http.Close(session)
+			if rc ~= 200 or not answer then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
 		answer = answer:gsub('\\/', '/')
@@ -55,14 +75,13 @@ local filter = {
 					if name and slug and id and not name:match('Live%s%d') then
 						t[#t + 1] = {}
 						t[#t].name = unescape3(name)
-						t[#t].address = host .. slug .. '/' .. id
+						t[#t].address = string.format('https://ucdn.beetv.kz/bpk-tv/%s/tve/index.mpd', id)
 						t[#t].logo = image or ''
 						if tab.data[i].catchup_availability.available then
-							t[#t].RawM3UString = 'catchup="append" catchup-days="7" catchup-source="?begin=${start}&end=${timestamp}"'
+							t[#t].RawM3UString = 'catchup="default" catchup-days="7"'
 						end
 					end
 				end
-			--end
 	 return t
 	end
 	function GetList(UpdateID, m3u_file)
