@@ -1,31 +1,58 @@
--- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (27/8/26)
+-- видеоскрипт для плейлиста "BeeTV KZ" https://beetv.kz (7/9/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: beetvkz_pls.lua
 -- ## открывает подобные ссылки ##
 -- https://beetv.kz/77-tv/000002851
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
-		if not m_simpleTV.Control.CurrentAddress:match('https?://beetv%.kz') then return end
+		if not m_simpleTV.Control.CurrentAddress:match('https?://ucdn%.beetv%.kz') then return end
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	inAdr = inAdr:gsub('$OPT:.+', '')
-	local id = inAdr:match('([^/]%d+)$')
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
+	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'
+	if not m_simpleTV.User then
+		m_simpleTV.User = {}
+	end
+	if not m_simpleTV.User.beetv then
+		m_simpleTV.User.beetv = {}
+	end
+	local function GetPrx()
+		local prx
+		if m_simpleTV.Config.GetValue('beetv_prx') then
+			prx = m_simpleTV.Config.GetValue('beetv_prx')
+		else
+			local session = m_simpleTV.Http.New(user_agent)
+				if not session then return end
+			m_simpleTV.Http.SetTimeout(session, 8000)
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = loadstring(code)()
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVldHYucGhw'), headers = headers})
+			m_simpleTV.Http.Close(session)
+				if rc ~= 200 or not answer then return end
+			m_simpleTV.Config.SetValue('beetv_prx', answer)
+			prx = answer
+		end
+	 return prx
+	end
+	m_simpleTV.User.beetv.prx = GetPrx()
+	local session = m_simpleTV.Http.New(user_agent, decode64(m_simpleTV.User.beetv.prx), true)
+		if not session then return end
+	m_simpleTV.Http.SetRedirectAllow(session, false)
+	m_simpleTV.Http.SetTimeout(session, 12000)
+	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
+		if rc ~= 307 then return end
+	local head = m_simpleTV.Http.GetRawHeader(session)
+	m_simpleTV.Http.Close(session)
+	local inAdr = head:match('Location:%s([^\n]+)')
+		if not inAdr then return end
+	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 12000)
-	local url = decode64('aHR0cDovL3Ntb3RyaW0ub3JnL2FuaW1hbHBsYW5ldGhk')
-	local rc, answer = m_simpleTV.Http.Request(session, {url = url})
-		if rc ~= 200 then return end
-	local cooki = m_simpleTV.Http.GetCookies(session, url, 'PHPSESSID')
-		if not cooki then return end
-	local inAdr = string.format(decode64('aHR0cDovL3Ntb3RyaW0ub3JnLyVzLm0zdTg'), id)
-	local headers = 'Cookie: PHPSESSID=' .. cooki
-	local extOpt = '$OPT:http-ext-header=Cookie: PHPSESSID=' .. cooki
-	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr, headers = headers})
+	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 		if rc ~= 200 then return end
 	m_simpleTV.Http.Close(session)
 	local gm, rs, bn
@@ -49,11 +76,11 @@
 				t[#t + 1] = {}
 				t[#t].Id = bw
 				t[#t].Name = res .. 'p (' .. bw .. ' кбит/с)'
-				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s%s', inAdr, bw, extOpt)
+				t[#t].Address = string.format('%s$OPT:adaptive-logic=highest$OPT:adaptive-max-bw=%s', inAdr, bw)
 			end
 		end
 		if #t == 0 then
-			m_simpleTV.Control.CurrentAddress = inAdr .. extOpt
+			m_simpleTV.Control.CurrentAddress = inAdr
 		 return
 		end
 	table.sort(t, function(a, b) return a.Id < b.Id end)
@@ -65,7 +92,7 @@
 	t[#t + 1] = {}
 	t[#t].Id = 50000
 	t[#t].Name = '▫ адаптивное'
-	t[#t].Address = inAdr .. extOpt
+	t[#t].Address = inAdr
 	local index = #t
 		for i = 1, #t do
 			if t[i].Id >= lastQuality then
