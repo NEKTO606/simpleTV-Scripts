@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vkvideo.ru (5/9/26)
+-- видеоскрипт для сайта https://vkvideo.ru (12/9/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
@@ -56,7 +56,10 @@
 			or not tab.response.items [1]
 			then return end
 		
-		if tab.response.items[1].subtitles[1].url and tab.response.items[1].subtitles[1].url ~= '' then
+		if tab.response.items[1].subtitles
+			and tab.response.items[1].subtitles[1].url 
+			and tab.response.items[1].subtitles[1].url ~= '' 
+		then
 			subtitle = tab.response.items[1].subtitles[1].url
 			subtitle = '$OPT:sub-track-id=0$OPT:input-slave=' .. subtitle:gsub('u0026', '&')
 		end
