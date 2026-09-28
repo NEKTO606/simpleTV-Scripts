@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vkvideo.ru (12/9/26)
+-- видеоскрипт для сайта https://vkvideo.ru (28/9/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
@@ -8,12 +8,14 @@
 -- https://live.vkvideo.ru/app/embed/varball/stream/setanta2?tab=slots
 -- https://live.vkvideo.ru/channel30025007/stream/sl_229262
 -- https://vkplay.live/c1ymba
+-- https://vklive.ru/frady
 
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://vkvideo%.ru/tvchannels/')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://live%.vkvideo%.ru')
 			and not m_simpleTV.Control.CurrentAddress:match('^https?://vkvideo%.ru/live')
 			and not m_simpleTV.Control.CurrentAddress:match('^https://vkplay%.live')
+			and not m_simpleTV.Control.CurrentAddress:match('^https://vklive%.ru')
 		then return end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	local logo = 'https://static.live.vkplay.ru/static/favicon.png?v='
@@ -57,7 +59,7 @@
 			then return end
 		
 		if tab.response.items[1].subtitles
-			and tab.response.items[1].subtitles[1].url 
+			and tab.response.items[1].subtitles[1].url
 			and tab.response.items[1].subtitles[1].url ~= '' 
 		then
 			subtitle = tab.response.items[1].subtitles[1].url
@@ -81,13 +83,13 @@
 			m_simpleTV.Control.CurrentTitle_UTF8 = title
 		end
 
-	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live')  then
+	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live') or inAdr:match('vklive%.ru')  then
 		inAdr =inAdr:gsub('%?.+', '')
 		local user, stream, url
-		if inAdr:match('/app/embed/') or inAdr:match('/stream/') then
+		if inAdr:match('/app/embed/') and inAdr:match('/stream/') then
 			user, stream = inAdr:match('([^/]+)/stream/(.-)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/%s?', user, stream)
-		else
+		elseif inAdr:match('/app/embed/') and not inAdr:match('/stream/') then
 			user = inAdr:match('([^/]+)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/default?', user)
 		end
