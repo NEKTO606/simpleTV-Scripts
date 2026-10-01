@@ -1,5 +1,5 @@
--- скрапер TVS для загрузки плейлиста "ОККО" https://okko.tv (3/7/26)
--- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- скрапер TVS для загрузки плейлиста "ОККО" https://okko.tv (1/10/26)
+-- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: okko.lua
 -- ## Переименовать каналы ##
@@ -38,7 +38,7 @@ local filter = {
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
@@ -53,9 +53,9 @@ local filter = {
 		local header = 'x-scrapi-signature: ' .. sum
 	  return header
 	end
-	
+
 	local function GetJson(token)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = channels .. token, headers = GetHeader()})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvb2trbzIucGhwP3VybD0') .. encode64(channels .. token), headers = GetHeader()})
 			if rc ~= 200 then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
@@ -87,7 +87,8 @@ local filter = {
 			end
 		end
 		if not saveToken or tok == 'Нет рабочего токена' then
-			local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = loadstring(code)()
 			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdGtuLnBocD90dj1va2tv'), headers = headers})
 			if rc ~= 200 then return end
 				if answer then
