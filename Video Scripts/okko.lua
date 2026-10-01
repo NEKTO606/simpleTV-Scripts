@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "ОККО" https://okko.tv (30/7/26)
+-- видеоскрипт для плейлиста "ОККО" https://okko.tv (1/10/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: 'okko_pls.lua
@@ -24,7 +24,7 @@
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = ''
 
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0')
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	
@@ -41,7 +41,7 @@
 	end
 	
 	local function GetJson(token)
-		local rc, answer = m_simpleTV.Http.Request(session, {url = url .. token, headers = GetHeader()})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvb2trbzIucGhwP3VybD0') .. encode64(url .. token), headers = GetHeader()})
 			if rc ~= 200 then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
@@ -77,7 +77,8 @@
 		if saveToken and CheckToken(saveToken) == 200 then
 			tok = saveToken
 		else
-			local headers = m_simpleTV.Common.CryptographicHash(m_simpleTV.Common.GetCModuleExtension(), Md5) .. ': ' .. m_simpleTV.Common.CryptographicHash(os.date("!%Y|%m|%d", os.time()), Md5)
+			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
+			local headers = loadstring(code)()
 			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvdGtuLnBocD90dj1va2tv'), headers = headers})
 			if rc ~= 200 then return end
 				if answer then
@@ -137,14 +138,14 @@
 	   end
 	end
 	
-	if #x > 0 and GetKey(tab.elements.items[1].id) and tab.elements.items[1].assets.items[i].media.quality == 'Q_FULL_HD' then
+	if #x > 0 and GetKey(tab.elements.items[1].id) then
 		for i = 1, #x do
 			x[i].Address = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', x[i].Address, decode64(GetKey(tab.elements.items[1].id)))
 		end
 	end
 	
 	for i = 1, #tab.elements.items[1].assets.items do
-		if GetKey(tab.elements.items[1].id) then
+		if GetKey(tab.elements.items[1].id) and tab.elements.items[1].assets.items[i].media.quality == 'Q_FULL_HD' then
 			adr = string.format('%s$OPT:adaptive-use-avdemux$OPT:avdemux-options={decryption_key=%s}', tab.elements.items[1].assets.items[i].url, decode64(GetKey(tab.elements.items[1].id)))
 		else
 			if tab.elements.items[1].assets.items[i].media.drmType == 'NO_DRM'
