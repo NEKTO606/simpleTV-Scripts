@@ -46,8 +46,6 @@ local filter = {}
 		end
 	 return prx
 	end
-	local session = m_simpleTV.Http.New(user_agent, decode64(GetPrx()), true)
-	m_simpleTV.Http.SetTimeout(session, 8000)
 	
 	-----
 	math.randomseed( os.time() )
@@ -136,12 +134,17 @@ local filter = {}
 	
 	local function GetToken()
 	
+		local session = m_simpleTV.Http.New(user_agent, decode64(GetPrx()), true)
+			if not session then return end
+		m_simpleTV.Http.SetTimeout(session, 8000)
+	
 		local login = getUUID()
 		local pass = string.sub(encode64(login), 0, 32)
 		
 		local headers = 'Content-Type: application/json\n'
 		local body = '{"username":"' .. login .. '","password":"' .. pass .. '","is_guest":true,"app_version":"v30"}'
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = host .. 'users', body = body, headers = headers})
+		debug_in_file(rc .. '\n', "D:\xxx.txt")
 			if rc ~= 200 or not answer then return end
 		
 		local body1 = '{"login":"' .. login .. '","password":"' .. pass .. '","app_version":"v30"}'
@@ -163,17 +166,18 @@ local filter = {}
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = host .. 'auth/device', body = body3, headers = headers})
 		local device_token = answer:match('access_token":"([^"]+)')
 				if rc ~= 200 or not device_token then return end
-		
+		m_simpleTV.Http.Close(session)
 		m_simpleTV.Config.SetValue('almatv_token', device_token)
 		
 		return device_token
 	end
-	m_simpleTV.Http.Close(session)
 
 	local function LoadFromSite()
 		
 		local access_token = m_simpleTV.Config.GetValue('almatv_token')
 			if not access_token then access_token = GetToken() end
+				if not access_token then return end
+		
 		local url = string.format(host .. 'channels/channel_list?access_token=%s&channels_version=2', access_token)
 		local session = m_simpleTV.Http.New(user_agent)
 			if not session then return end
