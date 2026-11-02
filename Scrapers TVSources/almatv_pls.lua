@@ -144,7 +144,6 @@ local filter = {}
 		local headers = 'Content-Type: application/json\n'
 		local body = '{"username":"' .. login .. '","password":"' .. pass .. '","is_guest":true,"app_version":"v30"}'
 		local rc, answer = m_simpleTV.Http.Request(session, {method = 'post', url = host .. 'users', body = body, headers = headers})
-		debug_in_file(rc .. '\n', "D:\xxx.txt")
 			if rc ~= 200 or not answer then return end
 		
 		local body1 = '{"login":"' .. login .. '","password":"' .. pass .. '","app_version":"v30"}'
