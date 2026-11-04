@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vkvideo.ru (28/9/26)
+-- видеоскрипт для сайта https://vkvideo.ru (4/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vkvideo.ru/tvchannels/-18496184_456260645
@@ -6,6 +6,7 @@
 -- https://live.vkvideo.ru/jove
 -- https://live.vkvideo.ru/app/embed/sky_line
 -- https://live.vkvideo.ru/app/embed/varball/stream/setanta2?tab=slots
+-- https://live.vkvideo.ru/irbis_tv/stream/default
 -- https://live.vkvideo.ru/channel30025007/stream/sl_229262
 -- https://vkplay.live/c1ymba
 -- https://vklive.ru/frady
@@ -26,7 +27,7 @@
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	
-	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'
+	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:159.0) Gecko/20100101 Firefox/159.0'
 	
 	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
@@ -86,10 +87,13 @@
 	elseif inAdr:match('live%.vkvideo%.ru') or inAdr:match('vkplay%.live') or inAdr:match('vklive%.ru')  then
 		inAdr =inAdr:gsub('%?.+', '')
 		local user, stream, url
-		if inAdr:match('/app/embed/') and inAdr:match('/stream/') then
+		if inAdr:match('/stream/') and not inAdr:match('/default') then
 			user, stream = inAdr:match('([^/]+)/stream/(.-)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/%s?', user, stream)
-		elseif inAdr:match('/app/embed/') and not inAdr:match('/stream/') then
+		elseif inAdr:match('/stream/default') then
+			user = inAdr:match('([^/]+)/stream/default$')
+			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/default?', user)
+		else
 			user = inAdr:match('([^/]+)$')
 			url = string.format('https://api.live.vkvideo.ru/v1/channel/%s/stream/slot/default?', user)
 		end
