@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Beeline TV" https://beeline.tv (25/8/26)
+-- видеоскрипт для плейлиста "Beeline TV" https://beeline.tv (10/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts/
 -- ## необходим ##
 -- скрапер TVS: beeline-tv_pls.lua
@@ -29,7 +29,7 @@
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
 	local headers = loadstring(code)()
-	local rc, tok = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVlbGluZS5waHA/Yz0') .. id, headers = headers})
+	local rc, tok = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL2VwZzcucnUvYmVlbGluZS5waHA/Yz0') .. id, headers = headers})
 		if rc ~= 200 or tok == nil then return end
 	local url_tpl
 	for _, v in pairs(filter) do
