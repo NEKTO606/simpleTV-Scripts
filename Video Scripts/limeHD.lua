@@ -148,7 +148,7 @@
 		local res = w:match('RESOLUTION=%d+x(%d+)')
 		local bw = w:match('BANDWIDTH=(%d+)')
 		local track = w:match('(tracks.-m3u8)')
-		
+			if not track then return end
 		if bw and res then
 			bw = math.ceil(tonumber(bw) / 10000) * 10
 			t[#t + 1] = {}
