@@ -18,7 +18,6 @@
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	require 'json'
-	m_simpleTV.Control.EventPlayingInterval = 2000
 	if not m_simpleTV.User then
 		m_simpleTV.User = {}
 	end
@@ -130,6 +129,11 @@
 		m_simpleTV.Http.Close(session)
 		local inAdr = head:match('Location:%s([^\n]+)')
 			if not inAdr then return end
+		if inAdr:match('stitch%.teletarget%.ru') then
+			m_simpleTV.Control.CurrentAddress = inAdr
+		else
+			m_simpleTV.Control.EventPlayingInterval = 2000
+		end
 		local host = inAdr:match('(https://[^/]+/)')
 		local session = m_simpleTV.Http.New(user_agent)
 			if not session then return end
