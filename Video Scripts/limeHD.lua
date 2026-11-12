@@ -130,7 +130,7 @@
 		local inAdr = head:match('Location:%s([^\n]+)')
 			if not inAdr then return end
 		if inAdr:match('stitch%.teletarget%.ru') then
-			m_simpleTV.Control.CurrentAddress = inAdr
+			m_simpleTV.Control.CurrentAddress = inAdr .. '$OPT:http-user-agent=' .. user_agent
 		else
 			m_simpleTV.Control.EventPlayingInterval = 2000
 		end
