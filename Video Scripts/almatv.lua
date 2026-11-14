@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "AlmaTV" https://online.almatv.kz (5/10/26)
+-- видеоскрипт для плейлиста "AlmaTV" https://online.almatv.kz (14/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: almatv_pls.lua
@@ -34,7 +34,7 @@
 			m_simpleTV.Http.SetTimeout(session, 8000)
 			local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
 			local headers = loadstring(code)()
-			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvYmVldHYucGhw'), headers = headers})
+			local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL2VwZzcucnUvYmVldHYucGhw'), headers = headers})
 			m_simpleTV.Http.Close(session)
 				if rc ~= 200 or not answer then return end
 			m_simpleTV.Config.SetValue('beetv_prx', answer)
