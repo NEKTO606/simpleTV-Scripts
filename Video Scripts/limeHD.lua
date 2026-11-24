@@ -126,9 +126,9 @@
 		if not inAdr then return end
 	if inAdr:match('stitch%.teletarget%.ru') then
 		m_simpleTV.Control.CurrentAddress = inAdr
-	else
-		m_simpleTV.Control.EventPlayingInterval = 1000
+	 return
 	end
+	m_simpleTV.Control.EventPlayingInterval = 1000
 	local host = inAdr:match('(https://[^/]+/)')
 	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
