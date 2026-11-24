@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (12/11/26)
+-- скрапер TVS для загрузки плейлиста "Lime HD" https://limehd.tv (24/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: /luaScr/user/TVSources/scrapers/lime_hd_pls.lua
@@ -135,6 +135,8 @@ local filter = {
 					t[#t].logo = tab.channels[i].image
 					if tab.channels[i].with_archive and tab.channels[i].url_archive ~= '' and tab.channels[i].day_archive > 0 then
 						t[#t].RawM3UString = string.format('catchup="default" catchup-days="%s"', tab.channels[i].day_archive)
+					else
+						t[#t].RawM3UString = 'catchup="default" catchup-minutes="1"'
 					end
 				end
 			end
