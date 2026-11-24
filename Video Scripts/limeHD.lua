@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (23/11/26)
+-- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (24/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: /luaScr/user/TVSources/scrapers/lime_hd_pls.lua
@@ -10,7 +10,6 @@
 -- https://limehd.tv/adventurehd
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://limehd%.tv/') 
-		 and not m_simpleTV.Control.CurrentAddress:match('localhost:18080%/stream%.ts')
 		then return end
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
@@ -30,7 +29,7 @@
 	local user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:160.0) Gecko/20100101 Firefox/160.0'
 	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
-	m_simpleTV.Http.SetTimeout(session, 20000)
+	m_simpleTV.Http.SetTimeout(session, 12000)
 	
 	local function generate_string()
 		math.randomseed(os.time())
@@ -114,13 +113,12 @@
 	local err, tab = pcall(json.decode, answer)
 		if not tab then return end
 	local retAdr = tab.url
-	m_simpleTV.User.lime.url_archive = tab.stream.archive
 		if not retAdr then return end
 	m_simpleTV.Http.Close(session)
 	local session = m_simpleTV.Http.New(user_agent, '', true)
 		if not session then return end
 	m_simpleTV.Http.SetRedirectAllow(session, false)
-	m_simpleTV.Http.SetTimeout(session, 20000)
+	m_simpleTV.Http.SetTimeout(session, 12000)
 	local rc, answer = m_simpleTV.Http.Request(session, {url = retAdr, headers = header})
 	local head = m_simpleTV.Http.GetRawHeader(session)
 	m_simpleTV.Http.Close(session)
@@ -134,7 +132,7 @@
 	local host = inAdr:match('(https://[^/]+/)')
 	local session = m_simpleTV.Http.New(user_agent)
 		if not session then return end
-	m_simpleTV.Http.SetTimeout(session, 20000)
+	m_simpleTV.Http.SetTimeout(session, 12000)
 	local rc, answer = m_simpleTV.Http.Request(session, {url = retAdr, headers = header})
 		if rc ~= 200 or not answer then return end
 	local mono = retAdr:gsub('https://.-/', host)
@@ -142,33 +140,30 @@
 	for w in answer:gmatch('tracks%-v%da%d/mono.ts.m3u8') do
 		track = w
 	end
-
-	m_simpleTV.Http.Close(session)
-	
+	mono = 	mono:gsub('index.m3u8', track)
+	local rc, mono_body = m_simpleTV.Http.Request(session, {url = mono, headers = header})
+	local ts = mono:gsub('mono.ts.m3u8', '')
 	if m_simpleTV.User.lime and m_simpleTV.User.lime.server then
 		m_simpleTV.User.lime.server:close()
 		m_simpleTV.User.lime.server = nil
 	end
-
 	local socket = require("socket")
-
-	if m_simpleTV.User.lime and m_simpleTV.User.lime.server then
-		m_simpleTV.User.lime.server:close()
-	end
-
-	local server = assert(socket.bind("*", 18080))
+	local server = socket.tcp()
+	server:setoption("reuseaddr", true)
+	assert(server:bind("127.0.0.1", 18080))
+	assert(server:listen(16))
 	server:settimeout(0)
-
+	m_simpleTV.Http.Close(session)
 	m_simpleTV.User.lime = {
 		count_event = 0,
 		url_archive = tab.stream.archive,
-		mono = mono:gsub('index.m3u8', track),
+		mono = mono,
 		header = header,
 		server = server,
 		client = nil,
 		mono_ts = {}
 	}
-
-m_simpleTV.Control.CurrentAddress = 'http://localhost:18080/stream.ts$OPT:network-caching=3500$OPT:no-ts-trust-pcr'	
 	
+m_simpleTV.Control.CurrentAddress = 'http://127.0.0.1:18080/stream.ts$OPT:network-caching=3500'
+
 -- debug_in_file(t[index].Address .. '\n')
