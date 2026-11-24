@@ -1,4 +1,4 @@
--- расширение дополнения httptimeshift limeHD (23/11/26)
+-- расширение дополнения httptimeshift limeHD (24/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: /luaScr/user/TVSources/scrapers/lime_hd_pls.lua
@@ -14,7 +14,7 @@
 			 return
 			end
 			if not ((eventParams.params.address:match('limehd%.')
-				or eventParams.params.address:match('localhost:18080%/stream%.ts'))
+				or eventParams.params.address:match('127%.0%.0%.1:18080%/stream%.ts'))
 				and m_simpleTV.User
 				and m_simpleTV.User.lime
 				and m_simpleTV.User.lime.url_archive)
