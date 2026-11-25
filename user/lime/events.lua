@@ -1,4 +1,4 @@
--- ивент для источника "Lime HD" https://limehd.tv  (24/11/26)
+-- ивент для источника "Lime HD" https://limehd.tv  (25/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: /luaScr/user/TVSources/scrapers/lime_hd_pls.lua
@@ -19,6 +19,7 @@ if m_simpleTV.Control.EventPlayingInterval then
 
 	if m_simpleTV.Control.Reason == 'Stopped' or m_simpleTV.Control.Reason == 'Exiting' then
 		if lime then
+			os.remove(lime.tmpName_m3u8)
 			if lime.client then pcall(function() lime.client:close() end) end
 			if lime.server then pcall(function() lime.server:close() end) end
 			m_simpleTV.User.lime = nil
