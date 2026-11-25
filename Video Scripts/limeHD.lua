@@ -6,6 +6,7 @@
 -- скрипт ивента: /luaScr/user/lime/events.lua
 -- видеоскрипт: /luaScr/user/video/limeHD.lua
 -- расширение дополнения httptimeshift: /luaScr/user/httptimeshift/extensions/limehd-timeshift_ext.lua
+-- видоскрипт: vinteratv.lua
 -- ## открывает подобные ссылки ##
 -- https://limehd.tv/adventurehd
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
@@ -22,6 +23,7 @@
 	if not m_simpleTV.User.lime then
 		m_simpleTV.User.lime = {}
 	end
+	local vintera_mass = {[9] = 'np', [46] = 'soviet_movs', [319] = 'pmobile', [306] = 'terra', [662] = 'kinosezon', [294] = 'kinomenu', [30] = 'k_kino', [694] = 'polet', [702] = 'aqua'}
 	inAdr = inAdr:gsub('$OPT:.+', '')
 	local slug = inAdr:match('([^/]+)$')
 	m_simpleTV.Control.ChangeAddress = 'Yes'
@@ -125,6 +127,14 @@
 	local inAdr = head:match('Location:%s([^\n]+)')
 		if not inAdr then return end
 	if inAdr:match('stitch%.teletarget%.ru') then
+		for id, name in pairs(vintera_mass) do
+			if name == slug then
+				m_simpleTV.Control.ChangeAddress = 'No'
+				m_simpleTV.Control.CurrentAddress = 'https://vinteratv.com/tv/' .. id
+				dofile(m_simpleTV.MainScriptDir .. 'user\\video\\video.lua')
+			 return
+			end
+		end
 		m_simpleTV.Control.CurrentAddress = inAdr
 	 return
 	end
@@ -140,6 +150,7 @@
 	for w in answer:gmatch('tracks%-v%da%d/mono.ts.m3u8') do
 		track = w
 	end
+		if not track then return end
 	mono = 	mono:gsub('index.m3u8', track)
 	local rc, mono_body = m_simpleTV.Http.Request(session, {url = mono, headers = header})
 	local ts = mono:gsub('mono.ts.m3u8', '')
@@ -168,7 +179,7 @@
 
 local m3u8 = '#EXTM3U\n'..
 			 '#EXTINF:-1 catchup="default" catchup-minutes="1"\n' ..
-			 'http://127.0.0.1:18080/stream.ts$OPT:network-caching=3500'
+			 'http://127.0.0.1:18080/stream.ts'
 
 local retAdr
 if tab.stream.archive and tab.stream.archive ~= '' then
@@ -178,8 +189,8 @@ else
 		if fhandle then
 		fhandle:write(m3u8)
 		fhandle:close()
-end
-	retAdr = tmpName_m3u8
+	end
+	retAdr = tmpName_m3u8 .. '$OPT:network-caching=3500'
 end
 	
 m_simpleTV.Control.CurrentAddress = retAdr
