@@ -6,7 +6,7 @@
 -- скрипт ивента: /luaScr/user/lime/events.lua
 -- видеоскрипт: /luaScr/user/video/limeHD.lua
 -- расширение дополнения httptimeshift: /luaScr/user/httptimeshift/extensions/limehd-timeshift_ext.lua
-
+-- видоскрипт: vinteratv.lua
 if m_simpleTV.Control.EventPlayingInterval then
 	local curAdr = m_simpleTV.Control.CurrentAddress or ''
 	if not curAdr:match('limehd%.tv')
@@ -19,7 +19,9 @@ if m_simpleTV.Control.EventPlayingInterval then
 
 	if m_simpleTV.Control.Reason == 'Stopped' or m_simpleTV.Control.Reason == 'Exiting' then
 		if lime then
-			os.remove(lime.tmpName_m3u8)
+			if lime.tmpName_m3u8 ~= nil then
+				os.remove(lime.tmpName_m3u8)
+			end
 			if lime.client then pcall(function() lime.client:close() end) end
 			if lime.server then pcall(function() lime.server:close() end) end
 			m_simpleTV.User.lime = nil
