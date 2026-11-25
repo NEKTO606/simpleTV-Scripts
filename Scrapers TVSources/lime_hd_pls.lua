@@ -6,6 +6,7 @@
 -- скрипт ивента: /luaScr/user/lime/events.lua
 -- видеоскрипт: /luaScr/user/video/limeHD.lua
 -- расширение дополнения httptimeshift: /luaScr/user/httptimeshift/extensions/limehd-timeshift_ext.lua
+-- видоскрипт: vinteratv.lua
 -- ## Переименовать каналы ##
 local filter = {
 		{'Детско-юношеский телеканал «Карусель»', 'Карусель'},
