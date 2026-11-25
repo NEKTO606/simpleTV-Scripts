@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (24/11/26)
+-- видеоскрипт для плейлиста "Lime HD" https://limehd.tv (25/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: /luaScr/user/TVSources/scrapers/lime_hd_pls.lua
