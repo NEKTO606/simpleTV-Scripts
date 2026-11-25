@@ -154,6 +154,7 @@
 	assert(server:listen(16))
 	server:settimeout(0)
 	m_simpleTV.Http.Close(session)
+	local tmpName_m3u8 = TVSources_var.TVSdir .. 'm3u/lime_out.m3u8'
 	m_simpleTV.User.lime = {
 		count_event = 0,
 		url_archive = tab.stream.archive,
@@ -161,9 +162,26 @@
 		header = header,
 		server = server,
 		client = nil,
+		tmpName_m3u8 = tmpName_m3u8,
 		mono_ts = {}
 	}
+
+local m3u8 = '#EXTM3U\n'..
+			 '#EXTINF:-1 catchup="default" catchup-minutes="1"\n' ..
+			 'http://127.0.0.1:18080/stream.ts$OPT:network-caching=3500'
+
+local retAdr
+if tab.stream.archive and tab.stream.archive ~= '' then
+	retAdr = 'http://127.0.0.1:18080/stream.ts$OPT:network-caching=3500'
+else
+	local fhandle = io.open(tmpName_m3u8, 'w+')
+		if fhandle then
+		fhandle:write(m3u8)
+		fhandle:close()
+end
+	retAdr = tmpName_m3u8
+end
 	
-m_simpleTV.Control.CurrentAddress = 'http://127.0.0.1:18080/stream.ts$OPT:network-caching=3500'
+m_simpleTV.Control.CurrentAddress = retAdr
 
 -- debug_in_file(t[index].Address .. '\n')
