@@ -7,7 +7,7 @@
 расширение дополнения httptimeshift: /luaScr/user/httptimeshift/extensions/limehd-timeshift_ext.lua
 
 Для работы источника LimeHD необходимо наличие скриптов <b>LuaSocket</b> в сборке Симпла:<br>
-/luaScr/lib/socket.lua<br>
+<i>/luaScr/lib/socket.lua<br>
 /luaScr/lib/share5.1_x32/socket/core.dll<br>
-/luaScr/lib/share5.1_x64/socket/core.dll<br>
+/luaScr/lib/share5.1_x64/socket/core.dll</i><br>
 Если их нет скачать по <a target="_blank" href="https://disk.yandex.ru/d/c3ueDUXIxTHjbQ">ссылке</a> архив и распаковать в корень программы.
