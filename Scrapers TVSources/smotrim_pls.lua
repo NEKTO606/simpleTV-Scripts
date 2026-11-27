@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Смотрим" https://smotrim.ru (8/5/26)
+-- скрапер TVS для загрузки плейлиста "Смотрим" https://smotrim.ru (27/11/26)
 -- Copyright © 2017-2026 Nexterr, NEKTO666 | https://github.com/NEKTO606/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: smotrim.ru.lua, mediavitrina.lua
@@ -34,7 +34,7 @@ local filter = {
 		m_simpleTV.Http.SetTimeout(session, 8000)
 		local code = decode64("bG9jYWwgaGVhZGVycyA9IG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG1fc2ltcGxlVFYuQ29tbW9uLkdldENNb2R1bGVFeHRlbnNpb24oKSwgTWQ1KSAuLiAnOiAnIC4uIG1fc2ltcGxlVFYuQ29tbW9uLkNyeXB0b2dyYXBoaWNIYXNoKG9zLmRhdGUoJyElWXwlbXwlZCcsIG9zLnRpbWUoKSksIE1kNSkgcmV0dXJuIGhlYWRlcnM")
 		local headers = loadstring(code)()
-		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL285Njg4OW5vLmJlZ2V0LnRlY2gvc21vdHJpbS5waHA'), headers = headers})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cDovL2VwZzcucnUvc21vdHJpbS5waHA'), headers = headers})
 			if rc ~= 200 or not answer then return end
 		answer = answer:gsub('\\', '\\\\')
 		answer = answer:gsub('\\"', '\\\\"')
